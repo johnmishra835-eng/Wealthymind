@@ -1,0 +1,199 @@
+      <section class="page-head">
+        <div class="container">
+          <ol class="breadcrumb">
+            <li><a href="index.html">Home</a></li>
+            <li>Contact</li>
+          </ol>
+          <h1>Talk to the <span class="split-em split-accent">research desk</span></h1>
+          <p>
+            Ask about coverage, request a redacted sample note, or raise a
+            compliance matter. Every enquiry is answered by a person.
+          </p>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="container">
+          <div class="grid grid--2">
+            <div>
+              <h2>Send us an enquiry</h2>
+              <p class="muted mt-4">
+                Fields marked with an asterisk are required. We use what you
+                send only to answer your enquiry — see our
+                <a href="privacy-policy.html">privacy policy</a>.
+              </p>
+
+              <!-- To make this form live, set action="" to your form endpoint
+                   and method="post". Until then main.js blocks submission and
+                   shows a message pointing to the email address. -->
+              <form class="form mt-6" data-validate novalidate>
+                <div
+                  class="form__summary"
+                  data-error-summary
+                  role="alert"
+                  tabindex="-1"
+                  hidden
+                >
+                  <h2>Please correct the following</h2>
+                  <ul></ul>
+                </div>
+
+                <div class="field">
+                  <label for="name">Full name <span class="req" aria-hidden="true">*</span></label>
+                  <input
+                    id="name"
+                    name="name"
+                    type="text"
+                    autocomplete="name"
+                    required
+                    aria-describedby="name-error"
+                  />
+                  <p class="field__error" id="name-error" data-error-for="name"></p>
+                </div>
+
+                <div class="field">
+                  <label for="email">Email address <span class="req" aria-hidden="true">*</span></label>
+                  <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    autocomplete="email"
+                    required
+                    aria-describedby="email-hint email-error"
+                  />
+                  <p class="hint" id="email-hint">Research is delivered to this address.</p>
+                  <p class="field__error" id="email-error" data-error-for="email"></p>
+                </div>
+
+                <div class="field">
+                  <label for="phone">Mobile number</label>
+                  <input
+                    id="phone"
+                    name="phone"
+                    type="tel"
+                    inputmode="numeric"
+                    autocomplete="tel-national"
+                    pattern="[6-9][0-9]{9}"
+                    data-error-pattern="Enter a 10-digit Indian mobile number, without the country code."
+                    aria-describedby="phone-hint phone-error"
+                  />
+                  <p class="hint" id="phone-hint">Optional. 10 digits, no country code.</p>
+                  <p class="field__error" id="phone-error" data-error-for="phone"></p>
+                </div>
+
+                <div class="field">
+                  <label for="topic">What is this about? <span class="req" aria-hidden="true">*</span></label>
+                  <select id="topic" name="topic" required aria-describedby="topic-error">
+                    <option value="">Select a topic</option>
+                    <option>Research coverage and plans</option>
+                    <option>Request a redacted sample note</option>
+                    <option>Existing subscription</option>
+                    <option>Billing or refund</option>
+                    <option>Grievance or compliance</option>
+                    <option>Something else</option>
+                  </select>
+                  <p class="field__error" id="topic-error" data-error-for="topic"></p>
+                </div>
+
+                <div class="field">
+                  <label for="message">Your message <span class="req" aria-hidden="true">*</span></label>
+                  <textarea
+                    id="message"
+                    name="message"
+                    minlength="20"
+                    required
+                    aria-describedby="message-hint message-error"
+                  ></textarea>
+                  <p class="hint" id="message-hint">
+                    Please do not include bank details, passwords or OTPs.
+                  </p>
+                  <p class="field__error" id="message-error" data-error-for="message"></p>
+                </div>
+
+                <div class="field">
+                  <label class="checkbox" for="consent">
+                    <input id="consent" name="consent" type="checkbox" required aria-describedby="consent-error" />
+                    <span>
+                      I understand that Wealthymind Research provides research,
+                      not personalised investment advice, and that securities
+                      market investments carry risk of loss.
+                      <span class="req" aria-hidden="true">*</span>
+                    </span>
+                  </label>
+                  <p class="field__error" id="consent-error" data-error-for="consent"></p>
+                </div>
+
+                <div>
+                  <button class="btn btn--primary btn--lg" type="submit">Send enquiry</button>
+                </div>
+
+                <p class="form__status" data-form-status role="status" aria-live="polite"></p>
+              </form>
+            </div>
+
+            <div class="stack">
+              <div class="reg-strip" style="grid-template-columns: 1fr">
+                <div>
+                  <dt>General &amp; subscriptions</dt>
+                  <dd>{{EMAIL_LINK}}</dd>
+                </div>
+                <div>
+                  <dt>Grievances</dt>
+                  <dd>{{GRIEVANCE_EMAIL}}</dd>
+                </div>
+                <div>
+                  <dt>Telephone</dt>
+                  <dd>{{PHONE_LINK}}</dd>
+                </div>
+                <div>
+                  <dt>Registered office</dt>
+                  <dd>{{ADDRESS}}</dd>
+                </div>
+                <div>
+                  <dt>Working hours</dt>
+                  <dd>
+                    <span class="tbd">Mon–Fri, 9:30 am – 6:00 pm IST</span>
+                    (excluding exchange holidays)
+                  </dd>
+                </div>
+              </div>
+
+              <div class="reg-strip" style="grid-template-columns: 1fr">
+                <div>
+                  <dt>Principal Officer</dt>
+                  <dd>{{PRINCIPAL_OFFICER}}</dd>
+                </div>
+                <div>
+                  <dt>Compliance Officer</dt>
+                  <dd>{{COMPLIANCE_OFFICER}}</dd>
+                </div>
+              </div>
+
+              <div class="callout callout--warn">
+                <p class="callout__title">Beware of impersonation</p>
+                <p>
+                  We communicate only from addresses on our own domain and never
+                  through unofficial groups promising assured profits. We do not
+                  ask for your trading password, OTP or demat access, and we do
+                  not accept money into personal accounts. If someone contacts
+                  you claiming to be us, report it to {{GRIEVANCE_EMAIL}}.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section section--alt">
+        <div class="container container--narrow text-center">
+          <h2>Raising a formal complaint?</h2>
+          <p class="mt-4 muted">
+            Our grievance page sets out the escalation matrix, the timelines we
+            are bound to, and the SEBI SCORES and Smart ODR routes available to
+            you.
+          </p>
+          <div class="btn-row mt-7" style="justify-content: center">
+            <a class="btn btn--primary btn--lg" href="grievance-redressal.html">Grievance redressal process</a>
+          </div>
+        </div>
+      </section>

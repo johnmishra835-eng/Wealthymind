@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 92 56" role="img" aria-label="Wealthymind Research mark">
+  <title>Wealthymind Research mark</title>
+  <g fill="#1B2947">
+    <path d="M8 8h12l13 42H21z"/>
+    <path d="M27 8h12l13 42H40z"/>
+    <path d="M46 8h12l13 42H59z"/>
+  </g>
+  <g fill="#8B2332">
+    <circle cx="84" cy="12.5" r="5.5"/>
+    <circle cx="5.5" cy="47.5" r="5.5"/>
+  </g>
+</svg>

@@ -27,6 +27,11 @@ PAGES_DIR = SRC / "pages"
 # CONFIG — replace each None with the real, verified value.
 # ---------------------------------------------------------------------------
 
+# Sentinel: drop this field and any block that depends on it, instead of
+# rendering a placeholder. Use it for details that genuinely do not exist yet —
+# printing "N.A." on a compliance page looks worse than not having the row.
+OMIT = "OMIT"
+
 CONFIG = {
     # Verified from the Certificate of Incorporation.
     "CIN": "U66190GJ2025PTC170746",
@@ -36,15 +41,27 @@ CONFIG = {
     "SEBI_RA": None,  # e.g. "INH000012345"
     "BSE_ENL": None,  # e.g. "ENL/RA/1234"
     "VALIDITY": None,  # e.g. "12/03/2026 – Perpetual"
-    "GSTIN": None,  # e.g. "24AABCW1234C1ZX"
+    "GSTIN": "24AAECW3196N1ZS",
     # --- Contact.
-    "ADDRESS": None,  # full registered office address
-    "EMAIL": None,  # e.g. "support@wealthymindresearch.com"
-    "PHONE": None,  # e.g. "+91 79000 00000"
-    "GRIEVANCE_EMAIL": None,  # e.g. "grievance@wealthymindresearch.com"
-    # --- Named officers, as required of a research analyst entity.
-    "PRINCIPAL_OFFICER": None,  # "Name, email, phone"
-    "COMPLIANCE_OFFICER": None,  # "Name, email, phone"
+    "ADDRESS": (
+        "A-501, Ratnaakar 2, Prernatirth Derasar Road, Jodhpur Char Rasta, "
+        "Satellite, Ahmedabad, Gujarat 380015"
+    ),
+    "OFFICE_ADDRESS": (
+        "5th Floor, Binori B Square 3, 524, Sindhubhavan Road, Bodakdev, "
+        "Ahmedabad, Gujarat 380059"
+    ),
+    "EMAIL": "info@wmrpl.com",
+    # NOTE: 1234567890 is the number supplied for the build. It reads as a
+    # dummy — replace it with the real line before the site goes public.
+    "PHONE": "1234567890",
+    "GRIEVANCE_EMAIL": "office@wmrpl.com",
+    # --- Named officers.
+    # Set to OMIT on instruction: no officer is appointed yet, so every block
+    # naming one is removed rather than filled with "N.A.".
+    # A registered research analyst MUST name both — see PLACEHOLDERS.md.
+    "PRINCIPAL_OFFICER": OMIT,
+    "COMPLIANCE_OFFICER": OMIT,
 }
 
 PLACEHOLDER_HINTS = {
@@ -53,12 +70,46 @@ PLACEHOLDER_HINTS = {
     "VALIDITY": "DD/MM/YYYY – Perpetual",
     "GSTIN": "24XXXXXXXXXXXZX",
     "ADDRESS": "Registered office address, City, Gujarat – PIN",
+    "OFFICE_ADDRESS": "Office address, City, Gujarat – PIN",
     "EMAIL": "support@example.com",
     "PHONE": "+91 00000 00000",
     "GRIEVANCE_EMAIL": "grievance@example.com",
     "PRINCIPAL_OFFICER": "Name, email, phone",
     "COMPLIANCE_OFFICER": "Name, email, phone",
 }
+
+
+def is_omitted(key: str) -> bool:
+    return CONFIG.get(key) == OMIT
+
+
+def render_conditionals(template: str) -> str:
+    """Resolve {{#KEY}}...{{/KEY}} blocks.
+
+    The block is kept when CONFIG[KEY] holds a value or is still an unfilled
+    placeholder (so the visible `tbd` marker survives), and dropped entirely
+    when CONFIG[KEY] is OMIT. Innermost blocks resolve first, so nesting works.
+    """
+    pattern = re.compile(
+        r"[ \t]*\{\{#([A-Z_]+)\}\}\n?(((?!\{\{#)(?!\{\{/).|\n)*?)[ \t]*\{\{/\1\}\}\n?",
+        re.S,
+    )
+
+    def resolve(match):
+        key, body = match.group(1), match.group(2)
+        if key not in CONFIG:
+            raise KeyError(f"unknown conditional token {{{{#{key}}}}}")
+        return "" if is_omitted(key) else body
+
+    previous = None
+    while previous != template:
+        previous = template
+        template = pattern.sub(resolve, template)
+
+    leftover = re.search(r"\{\{[#/][A-Z_]+\}\}", template)
+    if leftover:
+        raise ValueError(f"unbalanced conditional block: {leftover.group(0)}")
+    return template
 
 # ---------------------------------------------------------------------------
 # Page registry: slug -> (title, meta description, noindex?)
@@ -88,8 +139,8 @@ PAGES = {
     ),
     "contact.html": (
         "Contact — Wealthymind Research Private Limited",
-        "Reach the Wealthymind Research desk, our compliance officer, or raise "
-        "a grievance.",
+        "Reach the Wealthymind Research desk in Ahmedabad, ask about research "
+        "coverage, or raise a grievance.",
     ),
     "investor-charter.html": (
         "Investor Charter — Wealthymind Research Private Limited",
@@ -127,6 +178,8 @@ PAGES = {
 def tbd(key: str) -> str:
     """Render a config value, or a visible placeholder if it is unset."""
     value = CONFIG.get(key)
+    if value == OMIT:
+        return ""
     if value:
         return html.escape(str(value))
     hint = PLACEHOLDER_HINTS.get(key, key)
@@ -135,6 +188,8 @@ def tbd(key: str) -> str:
 
 def mailto(key: str) -> str:
     value = CONFIG.get(key)
+    if value == OMIT:
+        return ""
     if value:
         safe = html.escape(value)
         return f'<a href="mailto:{safe}">{safe}</a>'
@@ -143,6 +198,8 @@ def mailto(key: str) -> str:
 
 def tel(key: str) -> str:
     value = CONFIG.get(key)
+    if value == OMIT:
+        return ""
     if value:
         safe = html.escape(value)
         digits = re.sub(r"[^\d+]", "", value)
@@ -161,6 +218,7 @@ def tokens() -> dict:
         "VALIDITY": tbd("VALIDITY"),
         "GSTIN": tbd("GSTIN"),
         "ADDRESS": tbd("ADDRESS"),
+        "OFFICE_ADDRESS": tbd("OFFICE_ADDRESS"),
         "EMAIL": tbd("EMAIL"),
         "PHONE": tbd("PHONE"),
         "EMAIL_LINK": mailto("EMAIL"),
@@ -182,10 +240,11 @@ def render(template: str, values: dict) -> str:
 
 
 def main() -> int:
-    layout = (SRC / "layout.html").read_text(encoding="utf-8")
+    layout = render_conditionals((SRC / "layout.html").read_text(encoding="utf-8"))
     base = tokens()
 
     missing = [k for k, v in CONFIG.items() if v is None]
+    omitted = [k for k in CONFIG if is_omitted(k)]
     written = []
 
     for slug, meta in PAGES.items():
@@ -197,7 +256,7 @@ def main() -> int:
         title, description = meta[0], meta[1]
         noindex = len(meta) > 2 and meta[2]
 
-        body = source.read_text(encoding="utf-8").rstrip("\n")
+        body = render_conditionals(source.read_text(encoding="utf-8").rstrip("\n"))
         values = dict(base)
         values.update(
             {
@@ -228,6 +287,19 @@ def main() -> int:
         print("  Fill them in the CONFIG block of build.py and rebuild.")
     else:
         print("\n  All placeholders filled.")
+
+    if omitted:
+        print(
+            f"\n  {len(omitted)} field(s) set to OMIT — every block naming them "
+            f"was removed from the output:"
+        )
+        for key in omitted:
+            print(f"    · {key}")
+        print(
+            "  A registered research analyst must name a Principal Officer and\n"
+            "  a Compliance Officer. Set real values before the registration\n"
+            "  goes live. See PLACEHOLDERS.md."
+        )
 
     return 0
 

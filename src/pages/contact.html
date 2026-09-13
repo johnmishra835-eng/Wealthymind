@@ -149,6 +149,12 @@
                   <dt>Registered office</dt>
                   <dd>{{ADDRESS}}</dd>
                 </div>
+                {{#OFFICE_ADDRESS}}
+                <div>
+                  <dt>Office</dt>
+                  <dd>{{OFFICE_ADDRESS}}</dd>
+                </div>
+                {{/OFFICE_ADDRESS}}
                 <div>
                   <dt>Working hours</dt>
                   <dd>
@@ -158,16 +164,20 @@
                 </div>
               </div>
 
+              {{#PRINCIPAL_OFFICER}}
               <div class="reg-strip" style="grid-template-columns: 1fr">
                 <div>
                   <dt>Principal Officer</dt>
                   <dd>{{PRINCIPAL_OFFICER}}</dd>
                 </div>
+                {{#COMPLIANCE_OFFICER}}
                 <div>
                   <dt>Compliance Officer</dt>
                   <dd>{{COMPLIANCE_OFFICER}}</dd>
                 </div>
+                {{/COMPLIANCE_OFFICER}}
               </div>
+              {{/PRINCIPAL_OFFICER}}
 
               <div class="callout callout--warn">
                 <p class="callout__title">Beware of impersonation</p>
@@ -188,7 +198,7 @@
         <div class="container container--narrow text-center">
           <h2>Raising a formal complaint?</h2>
           <p class="mt-4 muted">
-            Our grievance page sets out the escalation matrix, the timelines we
+            Our grievance page sets out the escalation route, the timelines we
             are bound to, and the SEBI SCORES and Smart ODR routes available to
             you.
           </p>

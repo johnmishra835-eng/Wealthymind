@@ -30,6 +30,7 @@
                 within 1 working day.
               </p>
             </li>
+            {{#COMPLIANCE_OFFICER}}
             <li>
               <h3>Escalate to the Compliance Officer</h3>
               <p>
@@ -38,6 +39,8 @@
                 {{COMPLIANCE_OFFICER}}.
               </p>
             </li>
+            {{/COMPLIANCE_OFFICER}}
+            {{#PRINCIPAL_OFFICER}}
             <li>
               <h3>Escalate to the Principal Officer</h3>
               <p>
@@ -45,6 +48,7 @@
                 Officer: {{PRINCIPAL_OFFICER}}.
               </p>
             </li>
+            {{/PRINCIPAL_OFFICER}}
             <li>
               <h3>Escalate to SEBI on SCORES</h3>
               <p>
@@ -72,7 +76,8 @@
         <div class="container">
           <h2>Escalation matrix</h2>
           <p class="muted mt-3">
-            Contact details and response times at each level.
+            Contact details and response times at each level. Every level is
+            reachable in writing, and each one has a stated deadline.
           </p>
           <div class="table-wrap mt-5">
             <table>
@@ -98,16 +103,20 @@
                   <td>{{GRIEVANCE_EMAIL}}</td>
                   <td>3 working days</td>
                 </tr>
+                {{#COMPLIANCE_OFFICER}}
                 <tr>
                   <th scope="row">Compliance Officer</th>
                   <td colspan="2">{{COMPLIANCE_OFFICER}}</td>
                   <td>7 working days</td>
                 </tr>
+                {{/COMPLIANCE_OFFICER}}
+                {{#PRINCIPAL_OFFICER}}
                 <tr>
                   <th scope="row">Principal Officer</th>
                   <td colspan="2">{{PRINCIPAL_OFFICER}}</td>
                   <td>7 working days</td>
                 </tr>
+                {{/PRINCIPAL_OFFICER}}
                 <tr>
                   <th scope="row">SEBI SCORES</th>
                   <td>SEBI</td>

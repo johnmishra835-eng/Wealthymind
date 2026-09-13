@@ -32,9 +32,12 @@
   --surface: #ffffff;
   --surface-sunken: #eef0f4;
 
+  /* Measured on --surface (#fff) and --bg (#f5f6f8): fg 15.7:1,
+     muted 7.1:1, subtle 5.4:1. --fg-subtle carries 12px labels, so it has to
+     clear 4.5:1 on its own — an earlier #77819a only reached 3.89:1. */
   --fg: #131a28;
-  --fg-muted: #55607a;
-  --fg-subtle: #77819a;
+  --fg-muted: #4d5871;
+  --fg-subtle: #5f6a82;
   --fg-on-inverse: #eef1f6;
   --fg-muted-on-inverse: #a3aec6;
 
@@ -1416,7 +1419,7 @@ th.num {
 
 .checkbox {
   display: grid;
-  grid-template-columns: 20px 1fr;
+  grid-template-columns: 24px 1fr;
   gap: var(--space-3);
   align-items: start;
   font-size: var(--text-sm);
@@ -1424,10 +1427,10 @@ th.num {
 }
 
 .checkbox input {
-  width: 20px;
-  height: 20px;
+  width: 24px;
+  height: 24px;
   min-height: 0;
-  margin-top: 0.15em;
+  margin-top: 0.05em;
   accent-color: var(--accent);
 }
 
@@ -1825,6 +1828,23 @@ html:not(.js) .reveal {
 /* --------------------------------------------------------------------------
    18. Utilities
    -------------------------------------------------------------------------- */
+
+/* --------------------------------------------------------------------------
+   17b. Standalone link hit areas
+   -------------------------------------------------------------------------- */
+
+/* A link that is the whole content of a cell or list item is a standalone
+   target, so WCAG 2.2's inline-link exception does not cover it and it needs
+   24px. Vertical padding grows the hit area on an inline box without changing
+   the line box; the negative margin keeps surrounding layout identical.
+   Links sitting inside running prose are left alone — the exception applies
+   there, and stretching them would break how the text wraps. */
+.footer__contact a,
+.reg-strip dd a,
+td a {
+  padding-block: 4px;
+  margin-block: -4px;
+}
 
 .sr-only {
   position: absolute;

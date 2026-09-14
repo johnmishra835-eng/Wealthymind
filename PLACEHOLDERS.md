@@ -1,117 +1,102 @@
 # Placeholders to fill before going live
 
-Everything on the site that we could not verify renders as a **highlighted
-`tbd` marker** — a pink/dashed box — so nothing invented can ship silently.
+Anything we could not verify renders as a **highlighted `tbd` marker** — a
+pink dashed box — so nothing invented ships silently.
 
-There are two kinds:
+All the company details are now filled in. What remains is a short list of
+dates and internal timelines only you can decide.
 
-1. **Config placeholders** — set once in the `CONFIG` block at the top of
-   `build.py`, then run `python3 build.py`. They propagate to every page.
-2. **Inline placeholders** — hard-coded `<span class="tbd">` in a specific page
-   under `src/pages/`. Edit the page, then rebuild.
-
-Run `python3 build.py` at any time: it prints which config values are still
-unset. To find every remaining inline one:
+Find every remaining one:
 
 ```bash
 grep -rn 'class="tbd"' src/pages/
 ```
 
----
-
-## 1. Config placeholders (`build.py`)
-
-| Key | What it is | Where it shows |
-| --- | --- | --- |
-| `SEBI_RA` | SEBI Research Analyst registration number (`INH…`) | Hero, registration strip, footer, about, charter, disclaimer |
-| `BSE_ENL` | BSE enlistment number for research analysts | Registration strip, footer, disclaimer |
-| `VALIDITY` | Registration validity period | Footer, disclaimer |
-| `GSTIN` | GST identification number | Registration strip, footer |
-| `ADDRESS` | Full registered office address with PIN | Footer, about, contact, privacy, terms |
-| `EMAIL` | General/subscriptions email | Footer, contact, terms, privacy |
-| `PHONE` | Telephone number | Footer, contact |
-| `GRIEVANCE_EMAIL` | Dedicated grievance email | Footer, contact, grievance, pricing |
-| `PRINCIPAL_OFFICER` | Name, email and phone | Footer, contact, grievance |
-| `COMPLIANCE_OFFICER` | Name, email and phone | Footer, contact, grievance, disclaimer |
-
-`CIN` and `SITE_URL` are already set. Change `SITE_URL` if the domain differs —
-it drives the canonical and Open Graph URLs.
+Then edit the page under `src/pages/` and run `python3 build.py`.
 
 ---
 
-## 2. Inline placeholders, by page
+## Remaining placeholders
 
-### `src/pages/pricing.html`
-- **Three plan prices** (`₹0,000`). Also review the plan names, the inclusion
-  lists and the billing period — these are a sensible starting structure, not
-  your commercial decisions.
-- **Regulatory fee ceiling.** The per-annum-per-family cap on fees charged to
-  individual and HUF clients must be quoted from the SEBI circular in force on
-  the day you publish. Do not copy a figure from another firm's website.
-
-### `src/pages/grievance-redressal.html`
-- **Escalation matrix** — the two `Name` cells for customer care and the
-  grievance desk.
-- **Complaints disclosure tables** — every figure, plus the month and financial
-  year labels. These must be updated monthly (by the 7th of the following
-  month) even when all values are nil.
-
-### `src/pages/investor-charter.html`
-- **Refund processing timeline** (`N` working days) — keep consistent with the
-  refund policy.
+### `src/pages/contact.html`
+- **Working hours.** Currently `Mon–Sat, 10:00 am – 7:00 pm IST`. Confirm or
+  change.
 
 ### `src/pages/terms-and-conditions.html`
 - **Last updated** date.
-- **Cancellation window** and **refund decision/credit timelines** (`N` days).
-- **Jurisdiction city** in Gujarat.
 
 ### `src/pages/privacy-policy.html`
 - **Last updated** date.
-- **Record retention period** — confirm against the regulation in force.
+- **Record retention period** — currently suggests 8 years; confirm with your
+  accountant or company secretary.
+- **Enquiry deletion period** — how long you keep enquiries that do not become
+  engagements.
 - **Response time** for a data-rights request.
 
-### `src/pages/disclaimer.html`
-- **Disciplinary action** row — must be answered truthfully, not left blank.
-- **Jurisdiction city** in Gujarat.
+---
 
-### `src/pages/contact.html`
-- **Working hours.**
+## Config
+
+Company details live in one place: the `CONFIG` block at the top of
+`build.py`. All are filled:
+
+| Key | Value |
+| --- | --- |
+| `CIN` | U66190GJ2025PTC170746 |
+| `GSTIN` | 24AAECW3196N1ZS |
+| `ADDRESS` | 5th Floor, Binori B Square 3, 524, Sindhubhavan Road, Bodakdev, Ahmedabad, Gujarat 380059 |
+| `EMAIL` | info@wmrpl.com |
+| `EMAIL_ALT` | office@wmrpl.com |
+| `PHONE` | +91 87348 10317 |
+| `SITE_URL` | https://www.wmrpl.com/ |
+
+Change `SITE_URL` if the domain differs — it drives the canonical and Open
+Graph URLs, and should match `robots.txt` and `sitemap.xml`.
 
 ---
 
-## 3. Not placeholders, but decide before launch
+## Not placeholders, but decide before launch
 
-- **Contact form endpoint.** The form has no `action`, so `assets/js/main.js`
-  blocks submission and shows a message pointing at the email address. Wire it
-  to a form service or your own handler, then set `action` and
-  `method="post"` on the `<form>` in `src/pages/contact.html`.
+- **Contact form endpoint.** The form has no `action`, so
+  `assets/js/main.js` blocks submission and shows a message pointing at the
+  email address. Wire it to a form service or your own handler, then set
+  `action` and `method="post"` on the `<form>` in `src/pages/contact.html`.
+- **Legal review.** The disclaimer, terms of use and privacy policy are
+  structured drafts written for an advisory practice. They are not legal
+  advice. Have a lawyer review them — particularly the limitation of liability
+  and the confidentiality commitments, since the latter describe what you will
+  actually do on a mandate.
+- **Every factual claim about the firm.** The copy commits to specific
+  behaviour: a small number of mandates at a time, anonymised first approaches,
+  NDAs before detailed materials, data room access withdrawn when a party
+  leaves, bad news reported the same week, fees agreed in an engagement letter
+  before work starts. Read these as promises and change anything you will not
+  actually do.
+- **Team page.** There is deliberately no team section, because we have no
+  names or bios. For an advisory firm this is the single most useful thing you
+  could add — who is doing the work matters more here than in most businesses.
 - **Logo fidelity.** `assets/img/mark.svg` and the header wordmark are a vector
-  reconstruction from the supplied image, not your original file. Compare them
-  against your master artwork before launch — see "Logo" in `README.md`.
-- **Sample note.** Several pages offer a "redacted sample note" on request.
-  Either prepare one or remove those references.
-- **Every factual claim about the firm.** The copy describes a research process
-  (six steps, second-reader review, fixed publication windows, closure notices).
-  It is written to be true of a disciplined research desk — but it describes
-  *your* operations, so read it as a commitment and change anything you will
-  not actually do.
+  reconstruction of your artwork, not your original file. See "Logo" in
+  `README.md` for the two things worth checking.
 
 ---
 
-## 4. Do not publish until this is true
+## What this site deliberately does not contain
 
-The site states in several places that the firm is a SEBI-registered research
-analyst. **If that registration has not been granted, this is a
-misrepresentation** and the claim must be removed, not merely left as a
-placeholder. Until the certificate is in hand, delete or reword:
+The business is fundraising and capital advisory, **not** research analysis or
+any regulated intermediary activity. The following were removed and should not
+be reintroduced:
 
-- the hero eyebrow "Research Analyst · Gujarat, India" (`src/pages/index.html`)
-- the `SEBI_RA` / `BSE_ENL` rows in the registration strip and footer
-- the "Registration" section of `src/pages/disclaimer.html`
-- `src/pages/investor-charter.html` in full — the Investor Charter is a
-  registered-intermediary obligation
-- the references to being "bound by" the SEBI (Research Analysts) Regulations
+- SEBI, BSE or NSE registration numbers, or any claim of registration
+- an Investor Charter
+- SCORES or Smart ODR grievance routes, or any complaints-disclosure table
+- named Principal Officer and Compliance Officer
+- subscription plans, pricing tiers and a refund policy
+- the market-risk banner and NISM certification wording
 
-Have the legal and compliance pages reviewed by a lawyer or compliance
-consultant familiar with those regulations before launch. The drafts here are a
-structured starting point, not legal advice.
+`build.py` enforces this: the build **fails** if any of those terms reappear in
+the generated HTML. If you genuinely become a registered intermediary later,
+update the guard list in `build.py` deliberately rather than deleting it.
+
+No client names, client counts, transaction values, success rates or
+testimonials appear anywhere, and the copy is written so none are needed.

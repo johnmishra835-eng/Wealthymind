@@ -4,10 +4,10 @@
             <li><a href="index.html">Home</a></li>
             <li>Contact</li>
           </ol>
-          <h1>Talk to the <span class="split-em split-accent">research desk</span></h1>
+          <h1>Talk to the <span class="split-em split-accent">capital advisory team</span></h1>
           <p>
-            Ask about coverage, request a redacted sample note, or raise a
-            compliance matter. Every enquiry is answered by a person.
+            Describe the business and what you are trying to fund. Every enquiry
+            is read and answered by a person, and treated as confidential.
           </p>
         </div>
       </section>
@@ -18,8 +18,8 @@
             <div>
               <h2>Send us an enquiry</h2>
               <p class="muted mt-4">
-                Fields marked with an asterisk are required. We use what you
-                send only to answer your enquiry — see our
+                Fields marked with an asterisk are required. We use what you send
+                only to respond to your enquiry — see our
                 <a href="privacy-policy.html">privacy policy</a>.
               </p>
 
@@ -40,28 +40,19 @@
 
                 <div class="field">
                   <label for="name">Full name <span class="req" aria-hidden="true">*</span></label>
-                  <input
-                    id="name"
-                    name="name"
-                    type="text"
-                    autocomplete="name"
-                    required
-                    aria-describedby="name-error"
-                  />
+                  <input id="name" name="name" type="text" autocomplete="name" required aria-describedby="name-error" />
                   <p class="field__error" id="name-error" data-error-for="name"></p>
                 </div>
 
                 <div class="field">
+                  <label for="company">Company <span class="req" aria-hidden="true">*</span></label>
+                  <input id="company" name="company" type="text" autocomplete="organization" required aria-describedby="company-error" />
+                  <p class="field__error" id="company-error" data-error-for="company"></p>
+                </div>
+
+                <div class="field">
                   <label for="email">Email address <span class="req" aria-hidden="true">*</span></label>
-                  <input
-                    id="email"
-                    name="email"
-                    type="email"
-                    autocomplete="email"
-                    required
-                    aria-describedby="email-hint email-error"
-                  />
-                  <p class="hint" id="email-hint">Research is delivered to this address.</p>
+                  <input id="email" name="email" type="email" autocomplete="email" required aria-describedby="email-error" />
                   <p class="field__error" id="email-error" data-error-for="email"></p>
                 </div>
 
@@ -85,11 +76,13 @@
                   <label for="topic">What is this about? <span class="req" aria-hidden="true">*</span></label>
                   <select id="topic" name="topic" required aria-describedby="topic-error">
                     <option value="">Select a topic</option>
-                    <option>Research coverage and plans</option>
-                    <option>Request a redacted sample note</option>
-                    <option>Existing subscription</option>
-                    <option>Billing or refund</option>
-                    <option>Grievance or compliance</option>
+                    <option>Private equity raise</option>
+                    <option>Venture capital raise</option>
+                    <option>Pre-IPO placement</option>
+                    <option>IPO &amp; capital market advisory</option>
+                    <option>Debt syndication</option>
+                    <option>Structured finance</option>
+                    <option>Due diligence</option>
                     <option>Something else</option>
                   </select>
                   <p class="field__error" id="topic-error" data-error-for="topic"></p>
@@ -97,15 +90,11 @@
 
                 <div class="field">
                   <label for="message">Your message <span class="req" aria-hidden="true">*</span></label>
-                  <textarea
-                    id="message"
-                    name="message"
-                    minlength="20"
-                    required
-                    aria-describedby="message-hint message-error"
-                  ></textarea>
+                  <textarea id="message" name="message" minlength="20" required aria-describedby="message-hint message-error"></textarea>
                   <p class="hint" id="message-hint">
-                    Please do not include bank details, passwords or OTPs.
+                    A short description of the business, the amount and the
+                    timeline is enough to start. Please do not send confidential
+                    financials through this form.
                   </p>
                   <p class="field__error" id="message-error" data-error-for="message"></p>
                 </div>
@@ -114,9 +103,9 @@
                   <label class="checkbox" for="consent">
                     <input id="consent" name="consent" type="checkbox" required aria-describedby="consent-error" />
                     <span>
-                      I understand that Wealthymind Research provides research,
-                      not personalised investment advice, and that securities
-                      market investments carry risk of loss.
+                      I understand that submitting this form does not create an
+                      advisory engagement, and that Wealthymind Research gives no
+                      assurance that any transaction will be completed or funded.
                       <span class="req" aria-hidden="true">*</span>
                     </span>
                   </label>
@@ -134,76 +123,48 @@
             <div class="stack">
               <div class="reg-strip" style="grid-template-columns: 1fr">
                 <div>
-                  <dt>General &amp; subscriptions</dt>
+                  <dt>General enquiries</dt>
                   <dd>{{EMAIL_LINK}}</dd>
                 </div>
                 <div>
-                  <dt>Grievances</dt>
-                  <dd>{{GRIEVANCE_EMAIL}}</dd>
+                  <dt>Office</dt>
+                  <dd>{{EMAIL_ALT_LINK}}</dd>
                 </div>
                 <div>
                   <dt>Telephone</dt>
                   <dd>{{PHONE_LINK}}</dd>
                 </div>
                 <div>
-                  <dt>Registered office</dt>
+                  <dt>Address</dt>
                   <dd>{{ADDRESS}}</dd>
                 </div>
-                {{#OFFICE_ADDRESS}}
-                <div>
-                  <dt>Office</dt>
-                  <dd>{{OFFICE_ADDRESS}}</dd>
-                </div>
-                {{/OFFICE_ADDRESS}}
                 <div>
                   <dt>Working hours</dt>
-                  <dd>
-                    <span class="tbd">Mon–Fri, 9:30 am – 6:00 pm IST</span>
-                    (excluding exchange holidays)
-                  </dd>
+                  <dd><span class="tbd">Mon–Sat, 10:00 am – 7:00 pm IST</span></dd>
                 </div>
               </div>
 
-              {{#PRINCIPAL_OFFICER}}
-              <div class="reg-strip" style="grid-template-columns: 1fr">
-                <div>
-                  <dt>Principal Officer</dt>
-                  <dd>{{PRINCIPAL_OFFICER}}</dd>
-                </div>
-                {{#COMPLIANCE_OFFICER}}
-                <div>
-                  <dt>Compliance Officer</dt>
-                  <dd>{{COMPLIANCE_OFFICER}}</dd>
-                </div>
-                {{/COMPLIANCE_OFFICER}}
+              <div class="callout">
+                <p class="callout__title">What happens next</p>
+                <p>
+                  We come back within two working days. If there looks to be a
+                  transaction, we suggest a call to understand the business, and
+                  we will sign an NDA before you share anything sensitive. Scope
+                  and fees are agreed in an engagement letter before work starts.
+                </p>
               </div>
-              {{/PRINCIPAL_OFFICER}}
 
               <div class="callout callout--warn">
                 <p class="callout__title">Beware of impersonation</p>
                 <p>
-                  We communicate only from addresses on our own domain and never
-                  through unofficial groups promising assured profits. We do not
-                  ask for your trading password, OTP or demat access, and we do
-                  not accept money into personal accounts. If someone contacts
-                  you claiming to be us, report it to {{GRIEVANCE_EMAIL}}.
+                  We correspond only from addresses on our own domain. We never
+                  ask for bank credentials or OTPs, we do not accept money into
+                  personal accounts, and we never promise assured or guaranteed
+                  returns. If someone contacts you claiming to be us, report it
+                  to {{EMAIL_ALT_LINK}}.
                 </p>
               </div>
             </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="section section--alt">
-        <div class="container container--narrow text-center">
-          <h2>Raising a formal complaint?</h2>
-          <p class="mt-4 muted">
-            Our grievance page sets out the escalation route, the timelines we
-            are bound to, and the SEBI SCORES and Smart ODR routes available to
-            you.
-          </p>
-          <div class="btn-row mt-7" style="justify-content: center">
-            <a class="btn btn--primary btn--lg" href="grievance-redressal.html">Grievance redressal process</a>
           </div>
         </div>
       </section>

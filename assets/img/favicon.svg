@@ -1,10 +1,11 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Wealthymind Research">
-  <title>Wealthymind Research</title>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Wealthymind">
+  <title>Wealthymind</title>
   <rect width="64" height="64" rx="10" fill="#1B2947"/>
   <g fill="#FFFFFF">
-    <path d="M14 14h8l9 30h-8z"/>
-    <path d="M27 14h8l9 30h-8z"/>
+    <path d="M11 15h7l8 34h-7z"/>
+    <path d="M22.5 15h7l8 34h-7z"/>
+    <path d="M34 15h7l8 34h-7z"/>
   </g>
-  <circle cx="49" cy="18" r="4.5" fill="#C6606E"/>
-  <circle cx="14.5" cy="46.5" r="4" fill="#C6606E"/>
+  <circle cx="55" cy="12" r="4" fill="#D9A0A8"/>
+  <circle cx="9" cy="52" r="4" fill="#D9A0A8"/>
 </svg>

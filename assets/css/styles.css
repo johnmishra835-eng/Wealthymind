@@ -396,6 +396,12 @@ p {
   mask: repeating-linear-gradient(108deg, #000 0 3px, transparent 3px 7px);
 }
 
+/* The marker alone is not enough — the label text sits on the inverse
+   surface too, so it needs the inverse foreground or it renders dark-on-dark. */
+.eyebrow--on-inverse {
+  color: var(--fg-muted-on-inverse);
+}
+
 .eyebrow--on-inverse::before {
   background: var(--wine-300);
 }
@@ -524,18 +530,27 @@ p {
    5. Brand lockup
    -------------------------------------------------------------------------- */
 
+/* One custom property drives the whole lockup, so the mark and the wordmark
+   always scale together. Sizing the mark in plain `em` used to make it shrink
+   wherever the inherited font-size differed (the footer sets 14px), which left
+   the mark and the wordmark visibly mismatched between header and footer. */
 .lockup {
+  --lockup-size: 1.5rem;
   display: inline-flex;
   align-items: center;
-  gap: 0.6em;
-  text-decoration: none;
+  gap: 0.4em;
+  font-size: var(--lockup-size);
   line-height: 1;
+  text-decoration: none;
 }
 
 .lockup__mark {
   flex: none;
+  height: 1.05em;
   width: auto;
-  height: 1.55em;
+  /* Explicit ratio: a flex item with width:auto can otherwise collapse,
+     which dropped the three bars and two dots to a sliver in some contexts. */
+  aspect-ratio: 92 / 56;
 }
 
 .lockup__mark .bar {
@@ -548,12 +563,13 @@ p {
 
 .lockup__word {
   font-family: var(--font-display);
-  font-size: 1.5rem;
+  font-size: 1em;
   font-weight: 500;
   letter-spacing: -0.015em;
   white-space: nowrap;
 }
 
+/* "Wealthy" italic navy, "Mind" roman wine — the split in the supplied mark. */
 .lockup__word .a {
   font-style: italic;
   color: var(--primary);
@@ -563,15 +579,8 @@ p {
   color: var(--accent);
 }
 
-.lockup__sub {
-  display: block;
-  font-family: var(--font-body);
-  font-size: 0.5rem;
-  font-style: normal;
-  font-weight: 500;
-  letter-spacing: 0.22em;
-  color: var(--fg-subtle);
-  margin-top: 0.35em;
+.lockup--sm {
+  --lockup-size: 1.125rem;
 }
 
 .section--inverse .lockup__word .a,
@@ -592,10 +601,6 @@ p {
 .section--inverse .lockup__mark .dot,
 .site-footer .lockup__mark .dot {
   fill: var(--wine-300);
-}
-
-.site-footer .lockup__sub {
-  color: var(--fg-muted-on-inverse);
 }
 
 /* --------------------------------------------------------------------------

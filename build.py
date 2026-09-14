@@ -7,9 +7,14 @@ project root. No dependencies beyond the Python 3 standard library.
     python3 build.py
 
 ------------------------------------------------------------------------------
-FILL IN THE CONFIG BLOCK BELOW BEFORE GOING LIVE.
-Any value left as None renders as a visible `tbd` placeholder on every page
-that uses it, so nothing silently ships as invented information.
+Business: fundraising and capital advisory — private equity, venture capital,
+pre-IPO, IPO and capital market advisory, debt syndication and structured
+finance, plus transaction due diligence.
+
+This is an advisory firm, NOT a research analyst or a registered market
+intermediary. Do not reintroduce SEBI/exchange registration numbers, an
+investor charter, SCORES or ODR grievance routes, subscription plans, or named
+Principal/Compliance Officers — none of those apply to this business.
 ------------------------------------------------------------------------------
 """
 
@@ -24,58 +29,88 @@ SRC = ROOT / "src"
 PAGES_DIR = SRC / "pages"
 
 # ---------------------------------------------------------------------------
-# CONFIG — replace each None with the real, verified value.
+# CONFIG — replace any None with the real, verified value.
+# Set a field to OMIT to drop it and every block that depends on it.
 # ---------------------------------------------------------------------------
 
-# Sentinel: drop this field and any block that depends on it, instead of
-# rendering a placeholder. Use it for details that genuinely do not exist yet —
-# printing "N.A." on a compliance page looks worse than not having the row.
 OMIT = "OMIT"
 
 CONFIG = {
     # Verified from the Certificate of Incorporation.
     "CIN": "U66190GJ2025PTC170746",
-    # Public site URL, with a trailing slash.
-    "SITE_URL": "https://www.wealthymindresearch.com/",
-    # --- Regulatory. Leave as None until the registration is actually granted.
-    "SEBI_RA": None,  # e.g. "INH000012345"
-    "BSE_ENL": None,  # e.g. "ENL/RA/1234"
-    "VALIDITY": None,  # e.g. "12/03/2026 – Perpetual"
     "GSTIN": "24AAECW3196N1ZS",
-    # --- Contact.
+    # Public site URL, with a trailing slash.
+    "SITE_URL": "https://www.wmrpl.com/",
+    # Single office address, as supplied.
     "ADDRESS": (
-        "A-501, Ratnaakar 2, Prernatirth Derasar Road, Jodhpur Char Rasta, "
-        "Satellite, Ahmedabad, Gujarat 380015"
-    ),
-    "OFFICE_ADDRESS": (
         "5th Floor, Binori B Square 3, 524, Sindhubhavan Road, Bodakdev, "
         "Ahmedabad, Gujarat 380059"
     ),
     "EMAIL": "info@wmrpl.com",
-    # NOTE: 1234567890 is the number supplied for the build. It reads as a
-    # dummy — replace it with the real line before the site goes public.
-    "PHONE": "1234567890",
-    "GRIEVANCE_EMAIL": "office@wmrpl.com",
-    # --- Named officers.
-    # Set to OMIT on instruction: no officer is appointed yet, so every block
-    # naming one is removed rather than filled with "N.A.".
-    # A registered research analyst MUST name both — see PLACEHOLDERS.md.
-    "PRINCIPAL_OFFICER": OMIT,
-    "COMPLIANCE_OFFICER": OMIT,
+    "EMAIL_ALT": "office@wmrpl.com",
+    "PHONE": "+91 87348 10317",
 }
 
 PLACEHOLDER_HINTS = {
-    "SEBI_RA": "INH000XXXXXX",
-    "BSE_ENL": "ENL/RA/XXXX",
-    "VALIDITY": "DD/MM/YYYY – Perpetual",
-    "GSTIN": "24XXXXXXXXXXXZX",
-    "ADDRESS": "Registered office address, City, Gujarat – PIN",
-    "OFFICE_ADDRESS": "Office address, City, Gujarat – PIN",
-    "EMAIL": "support@example.com",
+    "ADDRESS": "Office address, City, Gujarat – PIN",
+    "EMAIL": "info@example.com",
+    "EMAIL_ALT": "office@example.com",
     "PHONE": "+91 00000 00000",
-    "GRIEVANCE_EMAIL": "grievance@example.com",
-    "PRINCIPAL_OFFICER": "Name, email, phone",
-    "COMPLIANCE_OFFICER": "Name, email, phone",
+    "GSTIN": "24XXXXXXXXXXXZX",
+}
+
+# ---------------------------------------------------------------------------
+# Page registry: slug -> (title, meta description, noindex?)
+# ---------------------------------------------------------------------------
+
+PAGES = {
+    "index.html": (
+        "Wealthymind Research Private Limited — Fundraising & Capital Advisory",
+        "Wealthymind Research Private Limited is a fundraising and capital "
+        "advisory firm in Ahmedabad: private equity, venture capital, pre-IPO, "
+        "IPO and capital market advisory, debt syndication and structured "
+        "finance, with transaction due diligence.",
+    ),
+    "about.html": (
+        "About Us — Wealthymind Research Private Limited",
+        "Who we are, how we work on a mandate, and the principles behind our "
+        "fundraising and capital advisory practice in Ahmedabad.",
+    ),
+    "services.html": (
+        "Services — Wealthymind Research Private Limited",
+        "Private equity and venture capital raises, pre-IPO placements, IPO and "
+        "capital market advisory, debt syndication and structured finance.",
+    ),
+    "due-diligence.html": (
+        "Due Diligence — Wealthymind Research Private Limited",
+        "Buy-side, sell-side and vendor due diligence supporting fundraising "
+        "and capital market transactions: financial, commercial and tax scope.",
+    ),
+    "contact.html": (
+        "Contact — Wealthymind Research Private Limited",
+        "Reach the Wealthymind Research capital advisory team in Ahmedabad to "
+        "discuss a fundraising mandate or a due diligence engagement.",
+    ),
+    "disclaimer.html": (
+        "Disclaimer — Wealthymind Research Private Limited",
+        "The basis on which information on this website is provided, and the "
+        "limits of our advisory role.",
+    ),
+    "privacy-policy.html": (
+        "Privacy Policy — Wealthymind Research Private Limited",
+        "What personal and business information Wealthymind Research collects, "
+        "why, how it is protected, and the choices available to you.",
+    ),
+    "terms-and-conditions.html": (
+        "Terms of Use — Wealthymind Research Private Limited",
+        "The terms on which this website may be used, and how an advisory "
+        "engagement is actually created.",
+    ),
+    "404.html": (
+        "Page not found — Wealthymind Research Private Limited",
+        "The page you requested could not be found.",
+        True,
+    ),
 }
 
 
@@ -111,69 +146,6 @@ def render_conditionals(template: str) -> str:
         raise ValueError(f"unbalanced conditional block: {leftover.group(0)}")
     return template
 
-# ---------------------------------------------------------------------------
-# Page registry: slug -> (title, meta description, noindex?)
-# ---------------------------------------------------------------------------
-
-PAGES = {
-    "index.html": (
-        "Wealthymind Research Private Limited — Independent Equity Research",
-        "Wealthymind Research Private Limited publishes equity, technical and "
-        "derivatives research with a written thesis, a defined risk framework "
-        "and a stated review point.",
-    ),
-    "about.html": (
-        "About Us — Wealthymind Research Private Limited",
-        "Who we are, how we are governed, and the research principles "
-        "Wealthymind Research Private Limited operates under.",
-    ),
-    "services.html": (
-        "Research Scope — Wealthymind Research Private Limited",
-        "Fundamental equity, technical, derivatives and macro research "
-        "coverage, and what each published note contains.",
-    ),
-    "pricing.html": (
-        "Plans & Fees — Wealthymind Research Private Limited",
-        "Research subscription plans, fee terms and the regulatory fee limits "
-        "that apply to a SEBI research analyst.",
-    ),
-    "contact.html": (
-        "Contact — Wealthymind Research Private Limited",
-        "Reach the Wealthymind Research desk in Ahmedabad, ask about research "
-        "coverage, or raise a grievance.",
-    ),
-    "investor-charter.html": (
-        "Investor Charter — Wealthymind Research Private Limited",
-        "Vision, mission, services, investor rights and timelines, as required "
-        "under the SEBI Investor Charter for Research Analysts.",
-    ),
-    "grievance-redressal.html": (
-        "Grievance Redressal — Wealthymind Research Private Limited",
-        "How to raise a complaint, our escalation matrix and timelines, monthly "
-        "complaints disclosure, and the SEBI SCORES and Smart ODR routes.",
-    ),
-    "disclaimer.html": (
-        "Disclaimer & Disclosures — Wealthymind Research Private Limited",
-        "Standard disclaimer, analyst and entity disclosures, and conflict of "
-        "interest statements.",
-    ),
-    "terms-and-conditions.html": (
-        "Terms, Conditions & Refund Policy — Wealthymind Research Private Limited",
-        "Subscription terms, acceptable use, limitation of liability and the "
-        "refund and cancellation policy.",
-    ),
-    "privacy-policy.html": (
-        "Privacy Policy — Wealthymind Research Private Limited",
-        "What personal data Wealthymind Research collects, why, how long it is "
-        "kept, and the choices available to you.",
-    ),
-    "404.html": (
-        "Page not found — Wealthymind Research Private Limited",
-        "The page you requested could not be found.",
-        True,
-    ),
-}
-
 
 def tbd(key: str) -> str:
     """Render a config value, or a visible placeholder if it is unset."""
@@ -208,24 +180,18 @@ def tel(key: str) -> str:
 
 
 def tokens() -> dict:
-    year = datetime.date.today().year
     return {
-        "YEAR": str(year),
-        "CIN": html.escape(CONFIG["CIN"]),
-        "SITE_URL": html.escape(CONFIG["SITE_URL"]),
-        "SEBI_RA": tbd("SEBI_RA"),
-        "BSE_ENL": tbd("BSE_ENL"),
-        "VALIDITY": tbd("VALIDITY"),
+        "YEAR": str(datetime.date.today().year),
+        "CIN": tbd("CIN"),
         "GSTIN": tbd("GSTIN"),
+        "SITE_URL": html.escape(CONFIG["SITE_URL"]),
         "ADDRESS": tbd("ADDRESS"),
-        "OFFICE_ADDRESS": tbd("OFFICE_ADDRESS"),
         "EMAIL": tbd("EMAIL"),
-        "PHONE": tbd("PHONE"),
         "EMAIL_LINK": mailto("EMAIL"),
+        "EMAIL_ALT": tbd("EMAIL_ALT"),
+        "EMAIL_ALT_LINK": mailto("EMAIL_ALT"),
+        "PHONE": tbd("PHONE"),
         "PHONE_LINK": tel("PHONE"),
-        "GRIEVANCE_EMAIL": mailto("GRIEVANCE_EMAIL"),
-        "PRINCIPAL_OFFICER": tbd("PRINCIPAL_OFFICER"),
-        "COMPLIANCE_OFFICER": tbd("COMPLIANCE_OFFICER"),
     }
 
 
@@ -273,34 +239,49 @@ def main() -> int:
         (ROOT / slug).write_text(render(layout, values) + "\n", encoding="utf-8")
         written.append(slug)
 
+    # Nothing on this site should imply a regulated-intermediary status.
+    banned = {
+        "SEBI": r"\bSEBI\b",
+        "SCORES portal": r"scores\.sebi\.gov\.in",
+        "Smart ODR": r"smartodr",
+        "research analyst": r"research analyst",
+        "investor charter": r"investor charter",
+        "NISM": r"\bNISM\b",
+        "BSE/NSE enlistment": r"\b(BSE|NSE)\b",
+        "principal officer": r"principal officer",
+        "compliance officer": r"compliance officer",
+    }
+    leaks = []
+    for slug in written:
+        text = (ROOT / slug).read_text(encoding="utf-8")
+        for label, rx in banned.items():
+            if re.search(rx, text, re.I):
+                leaks.append(f"{slug}: {label}")
+
     print(f"Built {len(written)} pages:")
     for slug in written:
         print(f"  · {slug}")
 
     if missing:
-        print(
-            f"\n  {len(missing)} placeholder(s) still unset — these render as "
-            f"visible `tbd` markers on the site:"
-        )
+        print(f"\n  {len(missing)} placeholder(s) unset (render as `tbd` markers):")
         for key in missing:
             print(f"    · {key}")
-        print("  Fill them in the CONFIG block of build.py and rebuild.")
     else:
         print("\n  All placeholders filled.")
 
     if omitted:
-        print(
-            f"\n  {len(omitted)} field(s) set to OMIT — every block naming them "
-            f"was removed from the output:"
-        )
+        print(f"\n  {len(omitted)} field(s) set to OMIT:")
         for key in omitted:
             print(f"    · {key}")
-        print(
-            "  A registered research analyst must name a Principal Officer and\n"
-            "  a Compliance Officer. Set real values before the registration\n"
-            "  goes live. See PLACEHOLDERS.md."
-        )
 
+    if leaks:
+        print(f"\n  !! {len(leaks)} regulated-intermediary reference(s) found:")
+        for leak in leaks:
+            print(f"    · {leak}")
+        print("  This is an advisory firm, not a registered intermediary.")
+        return 1
+
+    print("\n  No regulated-intermediary references in output.")
     return 0
 
 

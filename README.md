@@ -37,7 +37,7 @@ build.py                  generator + CONFIG block (all shared facts live here)
 src/layout.html           the page shell: head, header, drawer, footer
 src/pages/*.html          one file per page — the <main> content only
 assets/css/styles.css     design tokens and all styling
-assets/js/main.js         drawer, theme toggle, scroll reveal, form validation
+assets/js/main.js         drawer, funding signal, scroll reveal, form validation
 assets/img/               logo mark and favicon (SVG)
 *.html                    ← generated output, committed so the site needs no build
 ```
@@ -92,18 +92,34 @@ finance template.
 | Display | Newsreader | transitional serif with a true italic, matching the wordmark |
 | Body / UI | IBM Plex Sans | institutional sans that holds up at small sizes in dense tables |
 
-The three-slash motif from the logo mark is reused as the section marker
-(`.eyebrow::before`) and as the faint diagonal field behind the hero, so the
-brand device does structural work instead of appearing once in the header.
+The three-slash motif from the logo mark is reused as the faint diagonal field
+behind the hero, so the brand device does structural work rather than appearing
+only in the header.
 
-Both light and dark themes are defined. The toggle stores one key (`wm-theme`)
-in `localStorage`; with no stored value the site follows the operating system.
+The site is **light theme only** — there is no dark mode and no theme toggle,
+by request. `color-scheme: light` is declared so form controls stay light even
+when the operating system is set to dark. The site stores nothing in the
+browser: no cookies, no `localStorage`.
 
 Text colours were measured with a scripted contrast check. On the two page
-surfaces — `--surface` `#ffffff` and `--bg` `#f5f6f8` — the light palette
-measures `--fg` 17.4:1, `--fg-muted` 7.1:1, `--fg-subtle` 5.4:1 and `--accent`
-8.8:1; the dark palette measures 14.2:1, 7.9:1, 5.6:1 and 6.4:1 on `#141e31`.
-The lowest value anywhere is 5.0:1, against a 4.5:1 requirement.
+surfaces — `--surface` `#ffffff` and `--bg` `#f5f6f8` — `--fg` measures 17.4:1,
+`--fg-muted` 7.1:1, `--fg-subtle` 5.4:1 and `--accent` 8.8:1. The lowest value
+anywhere is 5.0:1, against a 4.5:1 requirement.
+
+Section labels (`.eyebrow`) are 20px semibold in the wine accent with no
+decorative marker, so they read as headings rather than as small kickers.
+
+### The funding signal
+
+The home page carries one interactive element: a light bulb that stays dark
+through the first three stages of a mandate and lights only at "Capital in the
+account". It is driven by a single `--lit` custom property set by
+`assets/js/main.js`, so the SVG needs no per-stage markup. The warm amber
+(`--bulb-lit`) is used nowhere else on the site, which is what makes the lit
+state read as an event rather than as decoration. Stages are buttons with
+`aria-pressed`, arrow-key navigation and a polite live region announcing
+"Funded"; with JavaScript off the bulb simply stays in its off state and the
+stages remain readable.
 
 ### Logo
 
@@ -147,8 +163,8 @@ and two dots.
 
 ### Checked by script
 
-A Playwright audit runs every page at 375 / 768 / 1440 px in both themes and
-asserts four things:
+A Playwright audit runs every page at 375 / 768 / 1440 px and asserts four
+things:
 
 - **no horizontal scrolling** at any of the three widths
 - **sequential heading levels** and exactly one `h1` per page

@@ -83,11 +83,6 @@
           </nav>
 
           <div class="header__actions">
-            <button class="icon-btn" type="button" data-theme-toggle aria-pressed="false" aria-label="Switch to dark theme" title="Switch to dark theme">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
-                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z" />
-              </svg>
-            </button>
             <a class="btn btn--primary" href="contact.html">Talk to us</a>
             <button class="icon-btn nav-toggle" type="button" data-drawer-open aria-expanded="false" aria-controls="mobile-drawer" aria-label="Open menu">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
@@ -457,11 +452,124 @@
         </div>
       </section>
 
+      <section class="section section--alt">
+        <div class="container">
+          <div class="section-head">
+            <p class="eyebrow">The moment it counts</p>
+            <h2>Nothing is lit until the capital lands</h2>
+            <p>
+              Preparation, investors, diligence, terms — none of it is the
+              result. Step through a mandate and see where the switch actually
+              flips.
+            </p>
+          </div>
+
+          <div class="signal" data-signal data-stage="1">
+            <div class="signal__inner">
+              <div class="signal__bulb">
+                <svg viewBox="0 0 160 210" role="img" aria-labelledby="bulb-t">
+                  <title id="bulb-t">
+                    A light bulb, lit only at the final stage — when capital is
+                    raised.
+                  </title>
+                  <defs>
+                    <radialGradient id="bulb-halo">
+                      <stop offset="0%" stop-color="#e7a92b" stop-opacity=".38" />
+                      <stop offset="60%" stop-color="#e7a92b" stop-opacity=".10" />
+                      <stop offset="100%" stop-color="#e7a92b" stop-opacity="0" />
+                    </radialGradient>
+                  </defs>
+
+                  <!-- lit layer, faded in by --lit -->
+                  <g class="bulb__on">
+                    <circle class="bulb__halo" cx="80" cy="76" r="78" />
+                    <g class="bulb__ray">
+                      <path d="M80 6v-0.5" />
+                      <path d="M18 76H8M152 76h-10M32 32l-7-7M128 32l7-7" />
+                    </g>
+                  </g>
+
+                  <!-- glass, off -->
+                  <circle class="bulb__glass-off" cx="80" cy="76" r="46" />
+                  <g class="bulb__on">
+                    <circle class="bulb__glass-on" cx="80" cy="76" r="46" />
+                  </g>
+
+                  <!-- filament -->
+                  <path class="bulb__wire-off" d="M64 92c0-14 6-16 6-26m20 26c0-10 6-12 6-26" />
+                  <path class="bulb__wire-off" d="M70 66c3.5 7 7 7 10 0s6.5-7 10 0" />
+                  <g class="bulb__on">
+                    <path class="bulb__wire-on" d="M64 92c0-14 6-16 6-26m20 26c0-10 6-12 6-26" />
+                    <path class="bulb__wire-on" d="M70 66c3.5 7 7 7 10 0s6.5-7 10 0" />
+                  </g>
+
+                  <!-- cap and screw base -->
+                  <g class="bulb__metal">
+                    <path d="M60 120h40v12a6 6 0 0 1-6 6H66a6 6 0 0 1-6-6z" />
+                    <rect x="62" y="142" width="36" height="9" rx="2" />
+                    <rect x="62" y="155" width="36" height="9" rx="2" />
+                    <path d="M68 168h24l-5 12H73z" />
+                  </g>
+                </svg>
+                <p class="signal__status" data-signal-status role="status" aria-live="polite">
+                  Not yet funded
+                </p>
+              </div>
+
+              <div>
+                <ul class="signal__steps" role="group" aria-label="Mandate stages">
+                  <li>
+                    <button class="signal__step" type="button" data-signal-step="1" aria-pressed="true">
+                      <span class="signal__step-n" aria-hidden="true">01</span>
+                      <span>
+                        <span class="signal__step-t">A business and a requirement</span>
+                        <span class="signal__step-d">A plan, a number, and a reason to raise. The bulb is dark.</span>
+                      </span>
+                    </button>
+                  </li>
+                  <li>
+                    <button class="signal__step" type="button" data-signal-step="2" aria-pressed="false">
+                      <span class="signal__step-n" aria-hidden="true">02</span>
+                      <span>
+                        <span class="signal__step-t">Prepared properly</span>
+                        <span class="signal__step-d">Model, memorandum and data room built to withstand questions.</span>
+                      </span>
+                    </button>
+                  </li>
+                  <li>
+                    <button class="signal__step" type="button" data-signal-step="3" aria-pressed="false">
+                      <span class="signal__step-n" aria-hidden="true">03</span>
+                      <span>
+                        <span class="signal__step-t">In front of the right investors</span>
+                        <span class="signal__step-d">A managed process, diligence run, terms negotiated.</span>
+                      </span>
+                    </button>
+                  </li>
+                  <li>
+                    <button class="signal__step" type="button" data-signal-step="4" aria-pressed="false">
+                      <span class="signal__step-n" aria-hidden="true">04</span>
+                      <span>
+                        <span class="signal__step-t">Capital in the account</span>
+                        <span class="signal__step-d">Documented, closed, disbursed. This is the only stage that counts.</span>
+                      </span>
+                    </button>
+                  </li>
+                </ul>
+
+                <p class="small muted mt-5">
+                  An illustration of the stages of a mandate, not a prediction.
+                  Whether a raise completes depends on the business and on the
+                  market.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section class="section section--inverse">
         <div class="container container--narrow text-center">
-          <p class="eyebrow eyebrow--on-inverse" style="justify-content: center">
-            Get started
-          </p>
+          <p class="eyebrow eyebrow--on-inverse">Get started</p>
           <h2>Start with the transaction, not a pitch</h2>
           <p class="mt-4" style="color: var(--fg-muted-on-inverse)">
             Tell us what you are trying to fund and on what timeline. If we are

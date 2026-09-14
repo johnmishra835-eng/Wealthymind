@@ -7,61 +7,59 @@
 
   var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 
-  /* ---------------------------------------------------------------- theme */
+  /* ---------------------------------------------------------- funding signal */
 
-  var THEME_KEY = "wm-theme";
+  /* The bulb lights only at the final stage. Driven by one custom property so
+     the SVG needs no per-stage markup. */
+  document.querySelectorAll("[data-signal]").forEach(function (signal) {
+    var steps = Array.prototype.slice.call(
+      signal.querySelectorAll("[data-signal-step]")
+    );
+    var status = signal.querySelector("[data-signal-status]");
+    if (!steps.length) return;
 
-  function readStored() {
-    try {
-      return localStorage.getItem(THEME_KEY);
-    } catch (e) {
-      return null;
+    var LABELS = {
+      1: "Not yet funded",
+      2: "Not yet funded",
+      3: "Not yet funded",
+      4: "Funded"
+    };
+    var GLOW = { 1: 0, 2: 0.18, 3: 0.42, 4: 1 };
+
+    function setStage(stage) {
+      signal.dataset.stage = String(stage);
+      signal.style.setProperty("--lit", String(GLOW[stage]));
+      steps.forEach(function (btn) {
+        btn.setAttribute(
+          "aria-pressed",
+          String(Number(btn.dataset.signalStep) === stage)
+        );
+      });
+      if (status) status.textContent = LABELS[stage];
     }
-  }
 
-  function writeStored(value) {
-    try {
-      localStorage.setItem(THEME_KEY, value);
-    } catch (e) {
-      /* private mode or blocked storage — theme just won't persist */
-    }
-  }
+    steps.forEach(function (btn, index) {
+      btn.addEventListener("click", function () {
+        setStage(Number(btn.dataset.signalStep));
+      });
 
-  function systemTheme() {
-    return window.matchMedia("(prefers-color-scheme: dark)").matches
-      ? "dark"
-      : "light";
-  }
-
-  function applyTheme(theme) {
-    document.documentElement.setAttribute("data-theme", theme);
-    document.querySelectorAll("[data-theme-toggle]").forEach(function (btn) {
-      btn.setAttribute("aria-pressed", String(theme === "dark"));
-      var label =
-        theme === "dark" ? "Switch to light theme" : "Switch to dark theme";
-      btn.setAttribute("aria-label", label);
-      btn.setAttribute("title", label);
+      // left/right arrows walk the stages, as a stepper should
+      btn.addEventListener("keydown", function (event) {
+        var delta =
+          event.key === "ArrowRight" || event.key === "ArrowDown"
+            ? 1
+            : event.key === "ArrowLeft" || event.key === "ArrowUp"
+            ? -1
+            : 0;
+        if (!delta) return;
+        event.preventDefault();
+        var next = steps[(index + delta + steps.length) % steps.length];
+        next.focus();
+        setStage(Number(next.dataset.signalStep));
+      });
     });
-  }
 
-  var stored = readStored();
-  if (stored === "dark" || stored === "light") {
-    applyTheme(stored);
-  }
-
-  document.querySelectorAll("[data-theme-toggle]").forEach(function (btn) {
-    // reflect the effective theme before any click
-    var current =
-      document.documentElement.getAttribute("data-theme") || systemTheme();
-    btn.setAttribute("aria-pressed", String(current === "dark"));
-
-    btn.addEventListener("click", function () {
-      var now =
-        document.documentElement.getAttribute("data-theme") || systemTheme();
-      var next = now === "dark" ? "light" : "dark";
-      applyTheme(next);
-      writeStored(next);
-    });
+    setStage(1);
   });
 
   /* --------------------------------------------------------------- drawer */

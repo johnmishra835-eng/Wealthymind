@@ -9,8 +9,10 @@
 
   /* ---------------------------------------------------------- funding signal */
 
-  /* The bulb lights only at the final stage. Driven by one custom property so
-     the SVG needs no per-stage markup. */
+  /* The bulb brightens as the pointer moves down the stages and reaches full
+     only at "Capital in the account". Hover previews, click commits, and focus
+     mirrors hover so the keyboard gets the same feedback — hover alone would
+     leave keyboard and touch users with a dead illustration. */
   document.querySelectorAll("[data-signal]").forEach(function (signal) {
     var steps = Array.prototype.slice.call(
       signal.querySelectorAll("[data-signal-step]")
@@ -18,32 +20,43 @@
     var status = signal.querySelector("[data-signal-status]");
     if (!steps.length) return;
 
-    var LABELS = {
-      1: "Not yet funded",
-      2: "Not yet funded",
-      3: "Not yet funded",
-      4: "Funded"
-    };
-    var GLOW = { 1: 0, 2: 0.18, 3: 0.42, 4: 1 };
+    var GLOW = { 0: 0, 1: 0.12, 2: 0.4, 3: 0.7, 4: 1 };
+    var committed = 0; // nothing chosen yet, so the bulb starts dark
 
-    function setStage(stage) {
+    function stageOf(btn) {
+      return Number(btn.dataset.signalStep);
+    }
+
+    function paint(stage) {
       signal.dataset.stage = String(stage);
       signal.style.setProperty("--lit", String(GLOW[stage]));
+      if (status) {
+        status.textContent = stage === 4 ? "Funded" : "Not yet funded";
+      }
+    }
+
+    function commit(stage) {
+      committed = stage;
       steps.forEach(function (btn) {
-        btn.setAttribute(
-          "aria-pressed",
-          String(Number(btn.dataset.signalStep) === stage)
-        );
+        btn.setAttribute("aria-pressed", String(stageOf(btn) === stage));
       });
-      if (status) status.textContent = LABELS[stage];
+      paint(stage);
     }
 
     steps.forEach(function (btn, index) {
-      btn.addEventListener("click", function () {
-        setStage(Number(btn.dataset.signalStep));
+      // pointerenter rather than mouseenter so pen and touch behave sensibly
+      btn.addEventListener("pointerenter", function () {
+        paint(stageOf(btn));
       });
 
-      // left/right arrows walk the stages, as a stepper should
+      btn.addEventListener("focus", function () {
+        paint(stageOf(btn));
+      });
+
+      btn.addEventListener("click", function () {
+        commit(stageOf(btn));
+      });
+
       btn.addEventListener("keydown", function (event) {
         var delta =
           event.key === "ArrowRight" || event.key === "ArrowDown"
@@ -54,12 +67,24 @@
         if (!delta) return;
         event.preventDefault();
         var next = steps[(index + delta + steps.length) % steps.length];
-        next.focus();
-        setStage(Number(next.dataset.signalStep));
+        next.focus(); // the focus handler repaints
       });
     });
 
-    setStage(1);
+    // leaving the group settles back to whatever was actually chosen
+    signal.addEventListener("pointerleave", function () {
+      paint(committed);
+    });
+
+    signal.addEventListener(
+      "focusout",
+      function (event) {
+        if (!signal.contains(event.relatedTarget)) paint(committed);
+      },
+      true
+    );
+
+    paint(0);
   });
 
   /* --------------------------------------------------------------- drawer */

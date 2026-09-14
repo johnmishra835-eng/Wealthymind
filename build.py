@@ -66,30 +66,30 @@ PLACEHOLDER_HINTS = {
 PAGES = {
     "index.html": (
         "Wealthymind Research Private Limited — Fundraising & Capital Advisory",
-        "Wealthymind Research Private Limited is a fundraising and capital "
-        "advisory firm in Ahmedabad: private equity, venture capital, pre-IPO, "
-        "IPO and capital market advisory, debt syndication and structured "
-        "finance, with transaction due diligence.",
+        "Wealthymind Research Private Limited is a Fundraising and Capital "
+        "Advisory firm in Ahmedabad: Private Equity, Venture Capital, Pre-IPO, "
+        "IPO and Capital Market Advisory, Debt Syndication and Structured "
+        "Finance, with transaction Due Diligence.",
     ),
     "about.html": (
         "About Us — Wealthymind Research Private Limited",
         "Who we are, how we work on a mandate, and the principles behind our "
-        "fundraising and capital advisory practice in Ahmedabad.",
+        "Fundraising and Capital Advisory practice in Ahmedabad.",
     ),
     "services.html": (
         "Services — Wealthymind Research Private Limited",
-        "Private equity and venture capital raises, pre-IPO placements, IPO and "
-        "capital market advisory, debt syndication and structured finance.",
+        "Private Equity and Venture Capital raises, Pre-IPO Placements, IPO and "
+        "Capital Market Advisory, Debt Syndication and Structured Finance.",
     ),
     "due-diligence.html": (
         "Due Diligence — Wealthymind Research Private Limited",
-        "Buy-side, sell-side and vendor due diligence supporting fundraising "
+        "Buy-side, sell-side and vendor Due Diligence supporting fundraising "
         "and capital market transactions: financial, commercial and tax scope.",
     ),
     "contact.html": (
         "Contact — Wealthymind Research Private Limited",
         "Reach the Wealthymind Research capital advisory team in Ahmedabad to "
-        "discuss a fundraising mandate or a due diligence engagement.",
+        "discuss a fundraising mandate or a Due Diligence engagement.",
     ),
     "disclaimer.html": (
         "Disclaimer — Wealthymind Research Private Limited",

@@ -1708,9 +1708,12 @@ html:not(.js) .reveal {
 .signal {
   --lit: 0;
   --bulb-off: #dfe3ea;
-  --bulb-off-line: #aab3c4;
+  /* Outlines carry the 3:1 non-text contrast, which lets the glass fills stay
+     pale enough to read as glass. Measured: off outline 3.05:1 on white,
+     lit outline 7.06:1 on white and 3.40:1 on the lit amber. */
+  --bulb-off-line: #8a94a8;
   --bulb-lit: #e7a92b;
-  --bulb-lit-line: #8a5c06;
+  --bulb-lit-line: #7a5005;
 }
 
 .signal__inner {

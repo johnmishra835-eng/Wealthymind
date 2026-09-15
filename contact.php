@@ -243,6 +243,7 @@ $allowedTopics = [
     'IPO & Capital Market Advisory',
     'Debt Syndication',
     'Structured Finance',
+    'Insolvency Advisory',
     'Due Diligence',
     'Something else',
 ];

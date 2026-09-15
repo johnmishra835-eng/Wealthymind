@@ -8,8 +8,8 @@ project root. No dependencies beyond the Python 3 standard library.
 
 ------------------------------------------------------------------------------
 Business: fundraising and capital advisory — private equity, venture capital,
-pre-IPO, IPO and capital market advisory, debt syndication and structured
-finance, plus transaction due diligence.
+pre-IPO, IPO and capital market advisory, debt syndication, structured
+finance and insolvency advisory, plus transaction due diligence.
 
 This is an advisory firm, NOT a research analyst or a registered market
 intermediary. Do not reintroduce SEBI/exchange registration numbers, an
@@ -68,8 +68,8 @@ PAGES = {
         "Wealthymind Research Private Limited — Fundraising & Capital Advisory",
         "Wealthymind Research Private Limited is a Fundraising and Capital "
         "Advisory firm in Ahmedabad: Private Equity, Venture Capital, Pre-IPO, "
-        "IPO and Capital Market Advisory, Debt Syndication and Structured "
-        "Finance, with transaction Due Diligence.",
+        "IPO and Capital Market Advisory, Debt Syndication, Structured "
+        "Finance, Insolvency Advisory and transaction Due Diligence.",
     ),
     "about.html": (
         "About Us — Wealthymind Research Private Limited",
@@ -79,7 +79,8 @@ PAGES = {
     "services.html": (
         "Services — Wealthymind Research Private Limited",
         "Private Equity and Venture Capital raises, Pre-IPO Placements, IPO and "
-        "Capital Market Advisory, Debt Syndication and Structured Finance.",
+        "Capital Market Advisory, Debt Syndication, Structured Finance and "
+        "Insolvency Advisory.",
     ),
     "due-diligence.html": (
         "Due Diligence — Wealthymind Research Private Limited",

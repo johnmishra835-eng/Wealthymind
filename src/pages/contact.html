@@ -56,9 +56,8 @@
                      in it came from a bot; the timestamp catches instant posts.
                      aria-hidden and tabindex keep both out of the way of screen
                      readers and the keyboard. -->
-                <div class="trap" aria-hidden="true">
-                  <label for="website">Leave this field empty</label>
-                  <input id="website" name="website" type="text" tabindex="-1" autocomplete="off" />
+                <div class="trap" aria-hidden="true" hidden style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden">
+                  <input id="website" name="website" type="text" tabindex="-1" autocomplete="off" aria-hidden="true" />
                 </div>
                 <input type="hidden" name="started" data-started value="0" />
 
@@ -106,6 +105,7 @@
                     <option>IPO &amp; Capital Market Advisory</option>
                     <option>Debt Syndication</option>
                     <option>Structured Finance</option>
+                    <option>Insolvency Advisory</option>
                     <option>Due Diligence</option>
                     <option>Something else</option>
                   </select>
@@ -164,7 +164,7 @@
                 </div>
                 <div>
                   <dt>Working hours</dt>
-                  <dd><span class="tbd">Mon–Sat, 10:00 am – 7:00 pm IST</span></dd>
+                  <dd>Mon–Sat, 10:00 am – 7:00 pm IST</dd>
                 </div>
               </div>
 

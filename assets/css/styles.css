@@ -235,6 +235,21 @@ p {
   max-width: 40ch;
 }
 
+.text-center .lede {
+  max-width: 62ch;
+  margin-inline: auto;
+}
+
+/* Centring belongs in the stylesheet, not on every individual button row. */
+.text-center .btn-row,
+.text-center .eyebrow {
+  justify-content: center;
+}
+
+.text-center .btn-row {
+  display: flex;
+}
+
 .prose {
   max-width: 68ch;
 }
@@ -328,17 +343,17 @@ p {
 }
 
 .section {
-  padding-block: var(--space-9);
+  padding-block: var(--space-8);
 }
 
 @media (min-width: 768px) {
   .section {
-    padding-block: var(--space-11);
+    padding-block: var(--space-9);
   }
 }
 
 .section--tight {
-  padding-block: var(--space-8);
+  padding-block: var(--space-7);
 }
 
 .section--alt {
@@ -850,7 +865,7 @@ p {
     grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
     gap: var(--space-7);
     align-items: center;
-    padding-block: var(--space-11);
+    padding-block: var(--space-9);
   }
 }
 
@@ -1298,6 +1313,22 @@ th.num {
   border: 1px solid var(--success);
 }
 
+/* Email and phone links read as plain text in several places, which made
+   people miss that they are clickable. */
+a[href^="mailto:"],
+a[href^="tel:"] {
+  color: var(--accent);
+  font-weight: 500;
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--accent) 45%, transparent);
+}
+
+.site-footer a[href^="mailto:"],
+.site-footer a[href^="tel:"] {
+  color: #fff;
+  text-decoration-color: rgba(255, 255, 255, 0.5);
+}
+
 /* Honeypot. Moved out of view rather than display:none, because some bots
    skip hidden inputs — this one they fill in, which is exactly the tell. */
 .trap {
@@ -1429,7 +1460,7 @@ th.num {
 .page-head {
   background: var(--bg-alt);
   border-bottom: 1px solid var(--border);
-  padding-block: var(--space-8);
+  padding-block: var(--space-7);
 }
 
 .page-head h1 {
@@ -1501,7 +1532,7 @@ th.num {
 .footer__top {
   display: grid;
   gap: var(--space-8);
-  padding-block: var(--space-9);
+  padding-block: var(--space-8);
 }
 
 @media (min-width: 900px) {

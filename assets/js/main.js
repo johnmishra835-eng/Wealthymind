@@ -212,6 +212,46 @@
   var summaryList = summary ? summary.querySelector("ul") : null;
   var status = form.querySelector("[data-form-status]");
 
+  /* The markup ships without `novalidate` so that with JavaScript off the
+     browser still validates. Now that we are here and can show better
+     messages, turn the native bubbles off. */
+  form.noValidate = true;
+
+  /* Stamp when the page was rendered — contact.php rejects anything submitted
+     within a few seconds, which no person manages but bots do. */
+  var started = form.querySelector("[data-started]");
+  if (started) started.value = String(Math.floor(Date.now() / 1000));
+
+  /* contact.php redirects back with ?error=<code> when a submission is
+     refused server-side. Surface it above the form rather than leaving the
+     visitor on a page that looks like nothing happened. */
+  var SERVER_ERRORS = {
+    required: "Please fill in every required field, then send again.",
+    email: "That email address does not look valid. Please check it and send again.",
+    phone: "The mobile number must be 10 digits, starting 6\u20139.",
+    topic: "Please choose a topic from the list.",
+    message: "Please give us at least a couple of sentences about the enquiry.",
+    consent: "Please tick the acknowledgement before sending.",
+    length: "One of the fields is longer than we can accept. Please shorten it.",
+    rate: "Several enquiries have already been sent from this connection. Please wait a little, or email us directly.",
+    send: "Our mail server did not accept the message. Please email us directly at the address in the panel beside this form."
+  };
+
+  (function showServerError() {
+    var banner = form.querySelector("[data-server-error]");
+    var target = form.querySelector("[data-server-error-text]");
+    if (!banner || !target) return;
+    var code = new URLSearchParams(window.location.search).get("error");
+    if (!code || !Object.prototype.hasOwnProperty.call(SERVER_ERRORS, code)) return;
+    target.textContent = SERVER_ERRORS[code];
+    banner.hidden = false;
+    banner.focus();
+    // drop the parameter so a refresh does not replay the error
+    if (window.history.replaceState) {
+      window.history.replaceState({}, "", window.location.pathname);
+    }
+  })();
+
   var MESSAGES = {
     valueMissing: "This field is required.",
     typeMismatch: {
@@ -282,15 +322,24 @@
 
     if (!invalid.length) {
       if (summary) summary.hidden = true;
-      /* No backend is wired up yet — see README. Prevent a broken POST and
-         tell the user plainly instead of silently failing. */
+
       if (!form.getAttribute("action")) {
+        /* No endpoint configured — say so rather than POST into nothing. */
         event.preventDefault();
         if (status) {
           status.dataset.state = "ok";
           status.textContent =
             "Form endpoint is not configured yet. Please email us directly at the address in the footer.";
         }
+        return;
+      }
+
+      /* Let the browser submit normally. Disable the button so a slow
+         connection cannot produce two enquiries from one person. */
+      var submitBtn = form.querySelector('button[type="submit"]');
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Sending\u2026";
       }
       return;
     }

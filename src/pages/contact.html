@@ -23,10 +23,13 @@
                 <a href="privacy-policy.html">privacy policy</a>.
               </p>
 
-              <!-- To make this form live, set action="" to your form endpoint
-                   and method="post". Until then main.js blocks submission and
-                   shows a message pointing to the email address. -->
-              <form class="form mt-6" data-validate novalidate>
+              <form
+                class="form mt-6"
+                id="enquiry"
+                action="contact.php"
+                method="post"
+                data-validate
+              >
                 <div
                   class="form__summary"
                   data-error-summary
@@ -37,6 +40,27 @@
                   <h2>Please correct the following</h2>
                   <ul></ul>
                 </div>
+
+                <div
+                  class="form__summary"
+                  data-server-error
+                  role="alert"
+                  tabindex="-1"
+                  hidden
+                >
+                  <h2>Your enquiry was not sent</h2>
+                  <p data-server-error-text></p>
+                </div>
+
+                <!-- Spam traps. The honeypot is hidden from people, so anything
+                     in it came from a bot; the timestamp catches instant posts.
+                     aria-hidden and tabindex keep both out of the way of screen
+                     readers and the keyboard. -->
+                <div class="trap" aria-hidden="true">
+                  <label for="website">Leave this field empty</label>
+                  <input id="website" name="website" type="text" tabindex="-1" autocomplete="off" />
+                </div>
+                <input type="hidden" name="started" data-started value="0" />
 
                 <div class="field">
                   <label for="name">Full name <span class="req" aria-hidden="true">*</span></label>

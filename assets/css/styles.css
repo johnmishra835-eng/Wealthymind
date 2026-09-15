@@ -1298,6 +1298,16 @@ th.num {
   border: 1px solid var(--success);
 }
 
+/* Honeypot. Moved out of view rather than display:none, because some bots
+   skip hidden inputs — this one they fill in, which is exactly the tell. */
+.trap {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
 .checkbox {
   display: grid;
   grid-template-columns: 24px 1fr;

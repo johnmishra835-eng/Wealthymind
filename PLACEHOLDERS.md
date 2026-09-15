@@ -57,10 +57,9 @@ Graph URLs, and should match `robots.txt` and `sitemap.xml`.
 
 ## Not placeholders, but decide before launch
 
-- **Contact form endpoint.** The form has no `action`, so
-  `assets/js/main.js` blocks submission and shows a message pointing at the
-  email address. Wire it to a form service or your own handler, then set
-  `action` and `method="post"` on the `<form>` in `src/pages/contact.html`.
+- ~~**Contact form endpoint.**~~ Done — the form posts to `contact.php`, which
+  emails enquiries to `info@wmrpl.com`. It needs that mailbox to exist on the
+  hosting; see "The contact form" in `HOSTING.md`.
 - **Legal review.** The disclaimer, terms of use and privacy policy are
   structured drafts written for an advisory practice. They are not legal
   advice. Have a lawyer review them — particularly the limitation of liability

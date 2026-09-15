@@ -1,8 +1,9 @@
 # Hosting on Hostinger
 
-The site is plain static HTML — no PHP, no database, no Node. Total size is
-**288 KB**. Any Hostinger plan runs it comfortably, and a one-website limit is
-no constraint: this is one website.
+The site is static HTML plus one small PHP file for the contact form — no
+database, no Node, no build step on the server. Total size is **292 KB**. Any
+Hostinger plan runs it comfortably, and a one-website limit is no constraint:
+this is one website.
 
 hPanel's menu labels move around between redesigns, so below I name the
 *feature* to look for rather than promising an exact click path.
@@ -19,8 +20,8 @@ You need three things:
    change it in one place (`SITE_URL` in `build.py`) and rebuild. Do not just
    upload it under a different domain — the canonical tags would then point
    somewhere the site does not live, which confuses search engines.
-2. **The upload bundle** — `wealthymind-site.zip`, 64 KB, 20 files. It contains
-   only what a web server needs. The build sources (`src/`, `build.py`) and the
+2. **The upload bundle** — `wealthymind-site.zip`, 22 files. It contains only
+   what a web server needs. The build sources (`src/`, `build.py`) and the
    project notes are deliberately excluded.
 3. **About 20 minutes.**
 
@@ -80,6 +81,8 @@ public_html/
 ├── privacy-policy.html
 ├── terms-and-conditions.html
 ├── 404.html
+├── thank-you.html
+├── contact.php          ← the contact form handler
 ├── robots.txt
 ├── sitemap.xml
 ├── .htaccess
@@ -169,20 +172,67 @@ Ctrl+Shift+R / Cmd+Shift+R.
 
 ---
 
-## Two things that are not done yet
+## The contact form
 
-**The contact form does not submit.** It validates properly and then shows a
-message pointing people at the email address, because there is no endpoint
-behind it. That is honest behaviour rather than a silent failure, but it is not
-a working form. Hostinger shared hosting runs PHP, so a small handler that
-emails submissions to `info@wmrpl.com` is about thirty lines and needs no
-third-party service. Say the word and I will add it.
+The form posts to **`contact.php`**, which validates the submission and emails
+it to `info@wmrpl.com`. Plain PHP, no third-party service, no monthly fee.
 
-**Five dates and timelines in the legal pages** are still placeholders, shown
-as highlighted boxes. They are listed in `PLACEHOLDERS.md`. They will be
-visible to anyone reading those pages, so worth filling before you publicise
-the site — though nothing stops you going live now and editing them after.
+For it to work you need **one thing**: the `info@wmrpl.com` mailbox must
+actually exist on this hosting (Step 6 above). The message is sent *from* that
+address, because a server may only send as a domain it is authorised for — if
+the visitor's own address were used as the sender, most providers would reject
+it or file it as spam. The visitor's address goes in **Reply-To**, so hitting
+reply in your mail client still writes back to them.
 
-Also still worth adding, though neither blocks launch: a **team section** (for
-an advisory firm, who does the work is what clients most want to know), and a
-**legal review** of the disclaimer, terms and privacy policy.
+What happens on submit:
+
+| Outcome | What the visitor sees |
+| --- | --- |
+| Success | Redirected to `thank-you.html`, which explains what happens next |
+| A field is wrong | Back to the form with a specific message above it |
+| Too many attempts | "Please wait a little, or email us directly" |
+| Mail server refuses | An error, **and** the enquiry is written to a log so it is not lost |
+
+Built-in protections:
+
+- **Honeypot field** — invisible to people, so anything that fills it is a bot.
+  Bots get a fake success page so they do not retry.
+- **Time trap** — a submission arriving within three seconds of page load is
+  treated as automated.
+- **Rate limit** — five submissions per IP per hour.
+- **Header-injection defence** — newlines are stripped from every single-line
+  field, so a crafted name cannot add a `Bcc:` and turn your form into a spam
+  relay. This was tested explicitly.
+- **Server-side validation** — every rule is re-checked in PHP, never trusting
+  the browser.
+
+### Testing it after you go live
+
+Submit the form yourself with a real message. You should land on the thank-you
+page and receive the email at `info@wmrpl.com` within a minute or two. **Check
+the spam folder** — the first message from a new domain often lands there.
+
+If nothing arrives:
+
+1. Confirm the `info@wmrpl.com` mailbox exists in hPanel.
+2. Look for `wm-contact-failed.log` **one level above `public_html`**. If it is
+   there, PHP could not hand the mail off and the log holds the enquiries.
+3. If Hostinger's `mail()` is unreliable on your plan, the handler can be
+   switched to authenticated SMTP through your own mailbox. Ask me and it is a
+   small change.
+
+Consider adding an **SPF record** in hPanel's DNS zone if one is not already
+there — it markedly improves whether your mail reaches the inbox.
+
+---
+
+## Still outstanding
+
+**Five dates and timelines in the legal pages** are placeholders, shown as
+highlighted boxes and listed in `PLACEHOLDERS.md`. They are visible to anyone
+reading those pages, so worth filling before you publicise the site — though
+nothing stops you going live now and editing them after.
+
+Neither of these blocks launch, but both are worth doing: a **team section**
+(for an advisory firm, who does the work is what clients most want to know),
+and a **legal review** of the disclaimer, terms and privacy policy.

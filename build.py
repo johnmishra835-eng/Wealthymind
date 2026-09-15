@@ -106,6 +106,12 @@ PAGES = {
         "The terms on which this website may be used, and how an advisory "
         "engagement is actually created.",
     ),
+    "thank-you.html": (
+        "Thank you — Wealthymind Research Private Limited",
+        "Your enquiry has reached the Wealthymind Research desk. Here is what "
+        "happens next.",
+        True,
+    ),
     "404.html": (
         "Page not found — Wealthymind Research Private Limited",
         "The page you requested could not be found.",

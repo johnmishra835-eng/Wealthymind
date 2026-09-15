@@ -1,0 +1,85 @@
+# Wealthymind Research — Apache / LiteSpeed configuration
+# Hostinger shared hosting reads this file from public_html.
+#
+# The canonical host is https://www.wmrpl.com/ — it must match the <link
+# rel="canonical"> tags in the HTML and the Sitemap line in robots.txt. If you
+# decide to drop the "www", change all three together or search engines will
+# see two different addresses for the same page.
+
+# ---------------------------------------------------------------- error pages
+ErrorDocument 404 /404.html
+
+# -------------------------------------------------------- canonical host + TLS
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # Force HTTPS. Install the free SSL certificate in hPanel FIRST, or this
+  # rule will redirect visitors to an address the server cannot yet serve.
+  RewriteCond %{HTTPS} !=on
+  RewriteCond %{HTTP:X-Forwarded-Proto} !https
+  RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+  # Force the www host, to match the canonical tags
+  RewriteCond %{HTTP_HOST} ^wmrpl\.com$ [NC]
+  RewriteRule ^ https://www.wmrpl.com%{REQUEST_URI} [L,R=301]
+
+  # Allow /about as well as /about.html, without breaking existing links
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteCond %{REQUEST_FILENAME}\.html -f
+  RewriteRule ^(.+?)/?$ $1.html [L]
+</IfModule>
+
+# ------------------------------------------------------------------ hardening
+# Never serve the build sources or project notes, in case the whole repository
+# is deployed rather than just the built site.
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteRule ^(src/|build\.py|\.git) - [F,L]
+</IfModule>
+
+<FilesMatch "\.(md|py|log|yml|yaml|json|bak|orig)$">
+  Require all denied
+</FilesMatch>
+
+<Files ".htaccess">
+  Require all denied
+</Files>
+
+# No directory listings if a folder ever lacks an index file
+Options -Indexes
+
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  # Google Fonts is the only third party this site contacts
+  Header always set Content-Security-Policy "default-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; script-src 'self'; img-src 'self' data:; frame-ancestors 'self'; base-uri 'self'; form-action 'self'"
+</IfModule>
+
+# ------------------------------------------------------------------ compression
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css text/plain text/xml
+  AddOutputFilterByType DEFLATE application/javascript application/json
+  AddOutputFilterByType DEFLATE image/svg+xml
+</IfModule>
+
+# ----------------------------------------------------------------- caching
+# Assets are cached hard and HTML only briefly, so a content edit appears
+# immediately while CSS, JS and images stay cached. If you ever change a file
+# under /assets/ and the old version persists, rename it or clear the
+# Hostinger cache in hPanel.
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresDefault                              "access plus 1 week"
+  ExpiresByType text/html                     "access plus 10 minutes"
+  ExpiresByType text/css                      "access plus 1 year"
+  ExpiresByType application/javascript        "access plus 1 year"
+  ExpiresByType image/svg+xml                 "access plus 1 year"
+  ExpiresByType text/xml                      "access plus 1 day"
+  ExpiresByType text/plain                    "access plus 1 day"
+</IfModule>
+
+<IfModule mod_mime.c>
+  AddType image/svg+xml .svg
+  AddCharset UTF-8 .html .css .js .xml .txt
+</IfModule>

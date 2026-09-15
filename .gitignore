@@ -1,3 +1,7 @@
 __pycache__/
 .DS_Store
 node_modules/
+
+# never commit a filled-in copy of the mail handler
+contact-local.php
+wm-contact-failed.log

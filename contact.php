@@ -29,6 +29,32 @@ const SITE_NAME     = 'Wealthymind Research Private Limited';
 const MAX_PER_HOUR  = 5;                  // submissions allowed per IP per hour
 const MIN_SECONDS   = 3;                  // reject anything faster than a human
 
+/**
+ * SMTP relay — STRONGLY RECOMMENDED when the mailbox is on Google Workspace
+ * (or any mail host that is not this web server).
+ *
+ * Two things break PHP's built-in mail() in that situation:
+ *
+ *  1. The web server may decide it handles this domain's mail itself and try
+ *     to deliver locally, to a mailbox that does not exist there. The message
+ *     then vanishes without an error.
+ *  2. The domain's SPF record lists Google as the only authorised sender, so a
+ *     message sent straight from the web server fails SPF and is spam-filed or
+ *     rejected.
+ *
+ * Relaying through Workspace fixes both: the mail genuinely originates from
+ * Google, so SPF and DKIM pass and delivery is reliable.
+ *
+ * To enable, fill these in. Leave SMTP_HOST empty to fall back to mail().
+ * SMTP_PASS must be a Google APP PASSWORD, not the account password —
+ * Google Account > Security > 2-Step Verification > App passwords.
+ */
+const SMTP_HOST = '';                     // e.g. 'smtp.gmail.com'
+const SMTP_PORT = 587;                    // 587 = STARTTLS
+const SMTP_USER = '';                     // e.g. 'info@wmrpl.com'
+const SMTP_PASS = '';                     // 16-character app password
+const SMTP_TLS  = true;                   // STARTTLS; false only for testing
+
 // --- helpers ----------------------------------------------------------------
 
 /** Strip CR/LF so a value can never inject extra mail headers. */
@@ -69,6 +95,97 @@ function succeed(): never
 {
     header('Location: thank-you.html', true, 303);
     exit;
+}
+
+/**
+ * Minimal SMTP client: connect, EHLO, STARTTLS, AUTH LOGIN, envelope, DATA.
+ * Written out rather than pulling in a library so the site stays a plain
+ * upload with no composer step.
+ */
+function smtpSend(string $to, string $subjectEncoded, string $body, array $headers, string &$error = null): bool
+{
+    $socket = @stream_socket_client(
+        sprintf('tcp://%s:%d', SMTP_HOST, SMTP_PORT),
+        $errno,
+        $errstr,
+        20,
+        STREAM_CLIENT_CONNECT
+    );
+    if (!$socket) {
+        $error = "connect failed: $errstr ($errno)";
+        return false;
+    }
+    stream_set_timeout($socket, 20);
+
+    $read = static function () use ($socket, &$error): string {
+        $out = '';
+        while (($line = fgets($socket, 1024)) !== false) {
+            $out .= $line;
+            // a multi-line reply has a hyphen after the code; the last does not
+            if (strlen($line) < 4 || $line[3] !== '-') {
+                break;
+            }
+        }
+        return $out;
+    };
+
+    $cmd = static function (string $line, string $expect) use ($socket, $read, &$error): bool {
+        if ($line !== '') {
+            fwrite($socket, $line . "\r\n");
+        }
+        $reply = $read();
+        if (strncmp($reply, $expect, strlen($expect)) !== 0) {
+            $error = trim(($line !== '' ? explode(' ', $line)[0] : 'greeting') . ' -> ' . $reply);
+            return false;
+        }
+        return true;
+    };
+
+    $ok = $cmd('', '220')
+        && $cmd('EHLO ' . (SMTP_USER !== '' ? explode('@', SMTP_USER)[1] : 'localhost'), '250');
+
+    if ($ok && SMTP_TLS) {
+        $ok = $cmd('STARTTLS', '220');
+        if ($ok) {
+            $ok = @stream_socket_enable_crypto(
+                $socket,
+                true,
+                STREAM_CRYPTO_METHOD_TLS_CLIENT
+            );
+            if (!$ok) {
+                $error = 'STARTTLS negotiation failed';
+            } else {
+                // the session resets after TLS, so greet again
+                $ok = $cmd('EHLO ' . explode('@', SMTP_USER)[1], '250');
+            }
+        }
+    }
+
+    if ($ok && SMTP_USER !== '') {
+        $ok = $cmd('AUTH LOGIN', '334')
+            && $cmd(base64_encode(SMTP_USER), '334')
+            && $cmd(base64_encode(SMTP_PASS), '235');
+    }
+
+    if ($ok) {
+        $data = implode("\r\n", $headers) . "\r\n"
+            . 'To: ' . $to . "\r\n"
+            . 'Subject: ' . $subjectEncoded . "\r\n"
+            . 'Date: ' . date(DATE_RFC2822) . "\r\n"
+            . "\r\n"
+            // a lone "." would end DATA early, so any line that is just a dot
+            // is escaped to ".."
+            . preg_replace('/^\./m', '..', str_replace("\n", "\r\n", $body));
+
+        $ok = $cmd('MAIL FROM:<' . MAIL_FROM . '>', '250')
+            && $cmd('RCPT TO:<' . $to . '>', '250')
+            && $cmd('DATA', '354')
+            && $cmd($data . "\r\n.", '250');
+    }
+
+    @fwrite($socket, "QUIT\r\n");
+    @fclose($socket);
+    return (bool) $ok;
 }
 
 // --- only accept POST -------------------------------------------------------
@@ -184,13 +301,21 @@ $headers = [
     'X-Mailer: PHP/' . phpversion(),
 ];
 
-$sent = @mail(
-    MAIL_TO,
-    '=?UTF-8?B?' . base64_encode($subject) . '?=',
-    wordwrap($body, 78, "\n", true),
-    implode("\r\n", $headers),
-    '-f' . MAIL_FROM
-);
+$subjectEncoded = '=?UTF-8?B?' . base64_encode($subject) . '?=';
+$wrapped = wordwrap($body, 78, "\n", true);
+$smtpError = null;
+
+if (SMTP_HOST !== '') {
+    $sent = smtpSend(MAIL_TO, $subjectEncoded, $wrapped, $headers, $smtpError);
+} else {
+    $sent = @mail(
+        MAIL_TO,
+        $subjectEncoded,
+        $wrapped,
+        implode("\r\n", $headers),
+        '-f' . MAIL_FROM
+    );
+}
 
 if (!$sent) {
     /**
@@ -206,7 +331,8 @@ if (!$sent) {
     }
     @file_put_contents(
         $log,
-        gmdate('c') . "\t" . str_replace("\n", ' | ', $body) . "\n",
+        gmdate('c') . "\t" . ($smtpError ?? 'mail() returned false') . "\t"
+            . str_replace("\n", ' | ', $body) . "\n",
         FILE_APPEND | LOCK_EX
     );
     fail('send');

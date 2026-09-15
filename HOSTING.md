@@ -113,17 +113,91 @@ warning instead of the site. Issuing takes a few minutes.
 If hPanel also offers a **Force HTTPS** toggle, turning it on is harmless —
 `.htaccess` already does it, and the two do not conflict.
 
-## Step 6 — Set up the two mailboxes
+## Step 6 — Protect your Google Workspace email
 
-The site publishes **`info@wmrpl.com`** and **`office@wmrpl.com`** in the
-footer, on the contact page and throughout the legal pages. Those addresses
-need to actually receive mail, or the site is inviting people to write into a
-void.
+**`info@wmrpl.com` is already on Google Workspace, so there is nothing to
+create — but there is something to protect.**
 
-In hPanel find **Emails → Email Accounts** and create both. Hostinger includes
-free mailboxes on its shared plans; if your plan allows only one, create
-`info@` and set `office@` as a forwarder to it — the addresses stay valid
-either way.
+> ### ⚠️ Read this before attaching the domain
+>
+> When you point `wmrpl.com` at Hostinger, Hostinger writes its own DNS zone.
+> Its default zone includes **its own MX records**, which would replace
+> Google's. The moment that propagates, mail to `info@wmrpl.com` stops
+> reaching your Workspace inbox.
+>
+> **Before** or immediately after attaching the domain, open the DNS zone in
+> hPanel and make sure the MX records are Google's, not Hostinger's.
+
+### Getting the MX records right
+
+Do not copy MX records from me or from a blog post — Google changes its
+recommended set, and yours may differ. Open **Google Admin → Account →
+Domains → Manage domains → your domain**, and Google shows you the exact
+records it wants. Copy those into hPanel's DNS zone, and **delete any Hostinger
+MX records** that are there.
+
+Keep these Google records intact as well:
+
+| Type | Purpose | Where it comes from |
+| --- | --- | --- |
+| **MX** | Routes mail to Google | Google Admin |
+| **TXT (SPF)** | Says which servers may send as your domain | Usually `v=spf1 include:_spf.google.com ~all` |
+| **TXT (DKIM)** | Signs your outgoing mail | Google Admin → Apps → Gmail → Authenticate email |
+
+After the change, send yourself a test message from an outside account and
+confirm it still arrives in Workspace. Do that **before** you tell anyone the
+site is live.
+
+### `office@wmrpl.com`
+
+The site publishes this too. If it is not already a Workspace mailbox or alias,
+add it in Google Admin (an alias on the same account is free and enough).
+
+---
+
+## Step 6b — Point the contact form at Workspace
+
+This matters because your mailbox is not on Hostinger.
+
+PHP's built-in `mail()` is unreliable in exactly your situation, for two
+reasons:
+
+1. **Local delivery.** Hostinger's server may decide it handles mail for
+   `wmrpl.com` itself and deliver to a local mailbox that does not exist,
+   instead of routing out to Google. The message then disappears with no error.
+2. **SPF failure.** Your SPF record authorises Google to send as `wmrpl.com`.
+   A message sent directly from Hostinger's server is not from Google, fails
+   SPF, and gets spam-filed or rejected — by your own Workspace, ironically.
+
+**The fix is to relay through Workspace**, so the mail genuinely originates
+from Google and passes SPF and DKIM. `contact.php` supports this; it just needs
+credentials.
+
+1. On the Google account for `info@wmrpl.com`, turn on **2-Step Verification**
+   if it is not already on (App passwords are unavailable without it).
+2. Go to **Google Account → Security → 2-Step Verification → App passwords**
+   and create one. Google shows a **16-character password** once — copy it.
+3. Open `contact.php` and fill in the SMTP block near the top:
+
+```php
+const SMTP_HOST = 'smtp.gmail.com';
+const SMTP_PORT = 587;
+const SMTP_USER = 'info@wmrpl.com';
+const SMTP_PASS = 'xxxxxxxxxxxxxxxx';   // the 16-character app password
+const SMTP_TLS  = true;
+```
+
+4. Re-upload `contact.php`.
+
+Leaving `SMTP_HOST` empty makes the handler fall back to `mail()`. That may
+work on your plan — but if enquiries go missing, this is the first thing to
+change.
+
+**The app password is a credential.** It sits in `contact.php` on the server,
+which is normal for this kind of handler, but: never commit it to the
+repository, and if you ever suspect it has leaked, revoke it in the same Google
+screen and generate a new one. It grants mail access to that mailbox and
+nothing else, and revoking it does not affect your normal sign-in.
 
 ## Step 7 — Test properly
 
@@ -177,21 +251,20 @@ Ctrl+Shift+R / Cmd+Shift+R.
 The form posts to **`contact.php`**, which validates the submission and emails
 it to `info@wmrpl.com`. Plain PHP, no third-party service, no monthly fee.
 
-For it to work you need **one thing**: the `info@wmrpl.com` mailbox must
-actually exist on this hosting (Step 6 above). The message is sent *from* that
-address, because a server may only send as a domain it is authorised for — if
-the visitor's own address were used as the sender, most providers would reject
-it or file it as spam. The visitor's address goes in **Reply-To**, so hitting
-reply in your mail client still writes back to them.
+It sends either through **Workspace SMTP** (recommended — see Step 6b) or
+through PHP's `mail()` if the SMTP block is left empty.
 
-What happens on submit:
+Mail is sent **from** `info@wmrpl.com` with the enquirer in **Reply-To**, so
+hitting reply in Gmail writes back to them. It is deliberately not sent *as*
+the visitor: a server may only send as a domain it is authorised for, and doing
+otherwise fails SPF.
 
 | Outcome | What the visitor sees |
 | --- | --- |
 | Success | Redirected to `thank-you.html`, which explains what happens next |
 | A field is wrong | Back to the form with a specific message above it |
 | Too many attempts | "Please wait a little, or email us directly" |
-| Mail server refuses | An error, **and** the enquiry is written to a log so it is not lost |
+| Mail refused | An error, **and** the enquiry is written to a log so it is not lost |
 
 Built-in protections:
 
@@ -209,20 +282,18 @@ Built-in protections:
 ### Testing it after you go live
 
 Submit the form yourself with a real message. You should land on the thank-you
-page and receive the email at `info@wmrpl.com` within a minute or two. **Check
-the spam folder** — the first message from a new domain often lands there.
+page and receive the email in Workspace within a minute or two. **Check spam**
+— the first message from a new sender often lands there.
 
 If nothing arrives:
 
-1. Confirm the `info@wmrpl.com` mailbox exists in hPanel.
-2. Look for `wm-contact-failed.log` **one level above `public_html`**. If it is
-   there, PHP could not hand the mail off and the log holds the enquiries.
-3. If Hostinger's `mail()` is unreliable on your plan, the handler can be
-   switched to authenticated SMTP through your own mailbox. Ask me and it is a
-   small change.
-
-Consider adding an **SPF record** in hPanel's DNS zone if one is not already
-there — it markedly improves whether your mail reaches the inbox.
+1. Confirm the MX records still point to Google (Step 6). This is the most
+   likely cause, and it would also mean *all* your mail is failing.
+2. Switch to Workspace SMTP if you have not (Step 6b). This is the second most
+   likely cause.
+3. Look for `wm-contact-failed.log` **one level above `public_html`**. If it is
+   there, the send failed and the log holds both the enquiries and the reason —
+   nothing has been lost.
 
 ---
 
